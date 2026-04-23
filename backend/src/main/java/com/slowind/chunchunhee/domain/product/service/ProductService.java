@@ -17,12 +17,8 @@ public class ProductService {
         return productRepository.findAll();
     }
 
-    public Product getProduct(Long id) {
-        Optional<Product> op = productRepository.findById(id);
-
-        if (op.isEmpty()) { return null; }
-
-        return op.get();
+    public Optional<Product> getProduct(Long id) {
+        return productRepository.findById(id);
     }
 
     public void create(String name, String description) {
