@@ -5,6 +5,8 @@ import jakarta.persistence.Entity;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
+import java.math.BigDecimal;
+
 @Entity
 @Getter
 @Setter
@@ -13,11 +15,12 @@ import lombok.experimental.SuperBuilder;
 @SuperBuilder
 @ToString(callSuper = true)
 public class Product extends BaseEntity {
-    private String product_name;
-    private String product_description;
-//    private String product_price;
-//    private String product_image;
-//    private String product_status;
-//    private String product_type;
-//    private String product_category;
+    private String name;
+    private String description;
+//    private String price;
+//    private String image;
+//    private String status;
+//    private String type;
+//    private String category;
+//    private Long stock;
 }

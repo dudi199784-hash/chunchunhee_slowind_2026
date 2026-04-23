@@ -38,7 +38,20 @@ yml\uc0\u49483 \u54021 \
 @RequestMapping()		- \uc0\u54644 \u45817  \u52968 \u53944 \u47204 \u47084 \u51032  \u44592 \u48376  URL \
 @Getter				- getter \uc0\u51088 \u46041 \u49373 \u49457 \
 @AllArgsConstructor		- \uc0\u47784 \u46304  \u54596 \u46300  \u49373 \u49457 \u51088  \u51088 \u46041  \u49373 \u49457 \
+@NoArgsConstructor( PROTECTED )	- \uc0\u44592 \u48376  \u49373 \u49457 \u51088  \u49373 \u49457  \
 \
+@MappedSuperclass 		- \uc0\u54644 \u45817  \u53364 \u47000 \u49828 \u45716  \u53580 \u51060 \u48660 \u51012  \u50504 \u47564 \u46308 \u44256 , \u51088 \u49885 \u50640 \u44172  \u54596 \u46300 \u47564  \u47932 \u47140 \u51456 \u45796 \
+\
+@Id +\
+@GeneratedValue( strategy = GenerationType.IDENTITY ) - PK \uc0\u51088 \u46041  \u49373 \u49457  \
+\
+@CreatedDate\
+@LastModifiedDate\
+\
+@EntityListeners( AuditingEntityListener.class )	- Auditing \uc0\u44592 \u45733  \u54876 \u49457 \u54868  >> createdAt / updatedAt \u51088 \u46041  \u52292 \u50864 \u44592  \u50669 \u54624 \
+\
+@SuperBuilde			- \uc0\u49345 \u49549 \u44396 \u51312 \u50640 \u49436  Builde \u49324 \u50857  \u44032 \u45733 \u54616 \u44172  \u54632 \
+=========\
 \
 \
 \uc0\u54856 \
