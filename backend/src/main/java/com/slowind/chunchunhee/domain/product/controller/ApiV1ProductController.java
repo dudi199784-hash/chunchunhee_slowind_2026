@@ -2,6 +2,7 @@ package com.slowind.chunchunhee.domain.product.controller;
 
 import com.slowind.chunchunhee.domain.product.entity.Product;
 import com.slowind.chunchunhee.domain.product.service.ProductService;
+import com.slowind.chunchunhee.global.rsData.RsData;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -19,9 +20,9 @@ public class ApiV1ProductController {
 
     // --- 다건 조회
     @GetMapping("")
-    public List<Product> getProducts() {
+    public RsData<List<Product>> getProducts() {
         List<Product> products = productService.getList();
-        return products;
+        return RsData.of("S-1","성공", products);
     }
 
     // --- 단건 조회

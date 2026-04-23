@@ -15,6 +15,7 @@ public class NotProd {
     CommandLineRunner initData(ProductService productService) {
         return args -> {
             productService.create("상품명", "서술");
+            productService.create("상품명2", "서술2");
         };
     }
 }

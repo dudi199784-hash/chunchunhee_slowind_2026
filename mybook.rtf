@@ -51,6 +51,28 @@ yml\uc0\u49483 \u54021 \
 @EntityListeners( AuditingEntityListener.class )	- Auditing \uc0\u44592 \u45733  \u54876 \u49457 \u54868  >> createdAt / updatedAt \u51088 \u46041  \u52292 \u50864 \u44592  \u50669 \u54624 \
 \
 @SuperBuilde			- \uc0\u49345 \u49549 \u44396 \u51312 \u50640 \u49436  Builde \u49324 \u50857  \u44032 \u45733 \u54616 \u44172  \u54632 \
+\
+@Configuration			- \uc0\u54644 \u45817  \u53364 \u47000 \u49828 \u45716  \u49444 \u51221  \u53364 \u47000 \u49828 \
+@Profile(\{\'93dev\'94,\'94test\'94\})		- dev \uc0\u46608 \u45716  test \u54872 \u44221 \u50640 \u49436 \u47564  \u49892 \u54665 \
+\
+\
+\'97\'97\'97 \
+\
++ JpaRepository<Product, Long>\
+\
+\'93Product \uc0\u53580 \u51060 \u48660 \u51012  \u45796 \u47336 \u45716  Repository\'94\
+\
+\uc0\u51088 \u46041  \u51228 \u44277  \
+- findAll()\
+- findById()\
+- save()\
+- delete() \
+\
++ Optional<Product>\
+\
+\'93 \uc0\u44050 \u51060  \u51080 \u51012  \u49688 \u46020  \u51080 \u44256  \u50630 \u51012  \u49688 \u46020  \u51080 \u51020  \'93\
+\
+\
 =========\
 \
 \
