@@ -1,9 +1,9 @@
 import Image from "next/image";
 
-export default function Home() {
+export default function shop() {
   return (
     <div className="border border-red-500">
-      Home
+      Shop
     </div>
   );
 }
