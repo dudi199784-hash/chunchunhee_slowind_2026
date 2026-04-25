@@ -31,11 +31,18 @@ export default function RootLayout({
 }>) {
   return (
     <html>
-      <body>
+      <body className="flex flex-col">
+
         <Header />
-        {children}
+
+        <main className="w-full">
+            {children}
+        </main>
+
         <Footer />
+
         <ChatbotWindy />
+
       </body>
     </html>
   );
