@@ -7,7 +7,7 @@ type Item = {
 
 export default function MenuDropdown({ items }: { items: Item[] }) {
   return (
-    <div className="fixed top-16 right-6 w-48 shadow-lg rounded-lg z-50 border">
+    <div className="fixed top-24 right-4 z-[60] w-48 rounded-lg border border-neutral-200 bg-white text-neutral-900 shadow-lg md:right-8">
       <ul className="py-2 text-sm">
         {items.map((item, idx) => (
           <li
