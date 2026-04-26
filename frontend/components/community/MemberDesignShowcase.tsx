@@ -1,0 +1,128 @@
+"use client";
+
+import Link from "next/link";
+import { useEffect, useState } from "react";
+
+import {
+  memberDesignsByLikes,
+  memberDesignsByViews,
+} from "@/config/memberDesignPreview";
+import {
+  boardCardHoverShell,
+  boardCardListItem,
+} from "@/lib/boardCardHover";
+import MemberDesignMetricsRow from "./MemberDesignMetricsRow";
+
+const ROTATE_MS = 5000;
+const TRANSITION_MS = 450;
+
+type Mode = "views" | "likes";
+
+type MemberDesignShowcaseProps = {
+  className?: string;
+};
+
+export default function MemberDesignShowcase({
+  className = "",
+}: MemberDesignShowcaseProps) {
+  const [mode, setMode] = useState<Mode>("views");
+  const [isLoading, setIsLoading] = useState(false);
+
+  const items =
+    mode === "views" ? memberDesignsByViews : memberDesignsByLikes;
+
+  useEffect(() => {
+    let settleId: number | undefined;
+
+    const intervalId = window.setInterval(() => {
+      setIsLoading(true);
+      settleId = window.setTimeout(() => {
+        setMode((prev) => (prev === "views" ? "likes" : "views"));
+        setIsLoading(false);
+      }, TRANSITION_MS);
+    }, ROTATE_MS);
+
+    return () => {
+      window.clearInterval(intervalId);
+      if (settleId !== undefined) window.clearTimeout(settleId);
+    };
+  }, []);
+
+  const modeTitle =
+    mode === "views" ? "조회수가 높은 디자인" : "좋아요가 많은 디자인";
+
+  return (
+    <section
+      className={`mx-auto max-w-7xl border border-neutral-200 bg-neutral-50/60 px-6 py-12 md:px-10 md:py-16 ${className}`}
+      aria-labelledby="member-design-showcase-title"
+    >
+      <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
+        <div>
+          <p className="text-xs font-medium tracking-[0.2em] text-neutral-500">
+            COMMUNITY
+          </p>
+          <h2
+            id="member-design-showcase-title"
+            className="mt-2 text-2xl font-semibold tracking-wide text-neutral-900 md:text-3xl"
+          >
+            회원 유니폼 디자인
+          </h2>
+          <p className="mt-2 max-w-xl text-sm text-neutral-600">
+            회원이 올린 유니폼·로고 디자인을 카테고리별로 모아 보여줍니다. 아래
+            목록은 조회수 순위와 좋아요 순위가 번갈아 갱신됩니다.
+          </p>
+        </div>
+        <Link
+          href="/shop/popular"
+          className="shrink-0 text-sm font-medium text-neutral-900 underline-offset-4 transition hover:underline"
+        >
+          인기 상품 전체 보기 →
+        </Link>
+      </div>
+
+      <div className="mt-8 flex items-center justify-between gap-4 rounded-md border border-neutral-200 bg-white px-4 py-3 md:px-5">
+        <p className="text-xs font-medium text-neutral-500 md:text-sm">
+          지금 보는 순위
+        </p>
+        <p
+          className={`text-sm font-semibold text-neutral-900 transition-opacity duration-300 md:text-base ${
+            isLoading ? "opacity-40" : "opacity-100"
+          }`}
+          aria-live="polite"
+        >
+          {modeTitle}
+        </p>
+      </div>
+
+      <ul
+        className={`mt-6 grid list-none grid-cols-1 gap-6 transition-opacity duration-300 sm:grid-cols-2 lg:grid-cols-3 ${
+          isLoading ? "opacity-50" : "opacity-100"
+        }`}
+        role="list"
+      >
+        {items.map((item) => (
+          <li key={item.id} className={boardCardListItem}>
+            <div className={boardCardHoverShell}>
+              <article className="flex h-full flex-col overflow-hidden border border-neutral-200 bg-white transition-colors duration-500 ease-in-out hover:border-neutral-300">
+                <div className="aspect-[4/3] w-full bg-neutral-200/80" aria-hidden />
+                <div className="flex flex-1 flex-col gap-1 p-4">
+                  <span className="text-[11px] font-medium uppercase tracking-wide text-neutral-500">
+                    {item.category}
+                  </span>
+                  <h3 className="text-sm font-semibold text-neutral-900 md:text-base">
+                    {item.title}
+                  </h3>
+                  <p className="text-xs text-neutral-500">{item.author}</p>
+                  <MemberDesignMetricsRow
+                    viewsDisplay={item.viewsDisplay}
+                    likesDisplay={item.likesDisplay}
+                  />
+                </div>
+              </article>
+            </div>
+          </li>
+        ))}
+      </ul>
+    </section>
+  );
+}

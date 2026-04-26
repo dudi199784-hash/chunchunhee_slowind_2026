@@ -1,11 +1,13 @@
-import MenuDropdown from "./MenuDropdown"
+import MenuDropdown from "@/components/header/MenuDropdown";
 
 export default function Menu() {
   const items = [
-    { label: "스포츠 의류", href: "/shop/sports-wear" },
-    { label: "악세사리", href: "/shop/sports-acc" },
-    { label: "기타", href: "/shop/else" },
-  ]
+    { label: "상품 소개", href: "/shop/intro" },
+    { label: "인기 상품", href: "/shop/popular" },
+    { label: "공지사항", href: "/support/notice" },
+    { label: "FAQ", href: "/support/faq" },
+    { label: "고객센터", href: "/support/contact" },
+  ];
 
-  return <MenuDropdown items={items} />
+  return <MenuDropdown items={items} />;
 }

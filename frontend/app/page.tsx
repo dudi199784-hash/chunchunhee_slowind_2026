@@ -1,3 +1,5 @@
+import MemberDesignShowcase from "@/components/community/MemberDesignShowcase";
+
 import ScreenVideo from "./home/ScreenVideo";
 import Recommend from "./home/Recommend";
 import CustomMaker from "./home/CustomMaker";
@@ -9,6 +11,7 @@ export default function Home() {
       <ScreenVideo />
       <Recommend />
       <CustomMaker />
+      <MemberDesignShowcase className="mt-16 border-t border-neutral-200 pt-16 md:mt-20 md:pt-20" />
       <Slogan />
     </div>
   );

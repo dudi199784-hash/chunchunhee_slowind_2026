@@ -1,5 +1,12 @@
 @import "tailwindcss";
 
+/* 상수 문자열에만 있는 유틸(예: lib/boardCardHover.ts)도 빌드에 포함 */
+@source "../lib/**/*.ts";
+
+html {
+  scroll-behavior: smooth;
+}
+
 :root {
   --background: #ffffff;
   --foreground: #171717;
