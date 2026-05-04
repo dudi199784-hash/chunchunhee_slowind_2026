@@ -1,14 +1,16 @@
 import CustomMaker from "@/app/home/CustomMaker";
 import MemberDesignShowcase from "@/components/community/MemberDesignShowcase";
+import { fetchCartItems } from "@/lib/api/cart";
 
 import CartCategorySection from "./CartCategorySection";
-import {
-  cartLogoItems,
-  cartOtherItems,
-  cartUniformItems,
-} from "./cartData";
 
-export default function CartPage() {
+export default async function CartPage() {
+  const items = await fetchCartItems();
+
+  const cartLogoItems = items.filter((item) => item.category === "로고");
+  const cartUniformItems = items.filter((item) => item.category === "유니폼");
+  const cartOtherItems = items.filter((item) => item.category === "기타");
+
   return (
     <main className="mx-auto w-full max-w-7xl bg-white px-6 py-16 text-neutral-900 md:px-10 md:py-20">
       <header className="border-b border-neutral-200 pb-8">

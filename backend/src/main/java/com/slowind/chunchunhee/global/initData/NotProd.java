@@ -14,8 +14,9 @@ public class NotProd {
     @Bean
     CommandLineRunner initData(ProductService productService) {
         return args -> {
-            productService.create("상품명", "서술");
-            productService.create("상품명2", "서술2");
+            productService.create("상품명1", "서술1", "로고");
+            productService.create("상품명2", "서술2", "유니폼");
+            productService.create("상품명3", "서술3", "기타");
         };
     }
 }

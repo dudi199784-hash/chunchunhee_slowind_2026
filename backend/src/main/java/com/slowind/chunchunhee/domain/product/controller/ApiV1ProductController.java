@@ -2,16 +2,16 @@ package com.slowind.chunchunhee.domain.product.controller;
 
 import com.slowind.chunchunhee.domain.product.entity.Product;
 import com.slowind.chunchunhee.domain.product.service.ProductService;
-import com.slowind.chunchunhee.global.rsData.RsData;
+import com.slowind.chunchunhee.global.exception.ResourceNotFoundException;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
+import lombok.Data;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
+
 import java.util.List;
 
 @RestController
@@ -29,9 +29,9 @@ public class ApiV1ProductController {
 
     // --- 다건 조회
     @GetMapping("")
-    public RsData<ProductsResponse> getProducts() {
+    public ProductsResponse getProducts() {
         List<Product> products = productService.getList();
-        return RsData.of("S-1","성공", new ProductsResponse(products));
+        return new ProductsResponse(products);
     }
 
 
@@ -44,15 +44,95 @@ public class ApiV1ProductController {
 
     // --- 단건 조회
     @GetMapping("{id}")
-    public RsData<ProductResponse> getProduct(@PathVariable("id") Long id) {
-        return productService.getProduct(id).map( product -> RsData.of(
-                "S-1",
-                "성공",
-                             new ProductResponse(product)
-                )).orElseGet(()-> RsData.of(
-                        "F-1",
-                "%d번 상품은 존재하지 않습니다.".formatted(id),
-                        null
+    public ProductResponse getProduct(@PathVariable("id") Long id) {
+        return productService.getProduct(id)
+                .map( ProductResponse::new)
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "%d번 상품은 존재하지 않습니다.".formatted(id)
+                ));
+    }
+
+    @Data
+    public static class WriteRequest {
+        @NotBlank
+        private String title;
+        @NotBlank
+        private String description;
+        @NotBlank
+        private String category;
+    }
+
+    // --- inner 클래스 - WriteResponse
+    @Getter
+    @AllArgsConstructor
+    public static class WriteResponse {
+        private final Product product;
+    }
+
+    // ---
+    @PostMapping("")
+    public WriteResponse write(@Valid @RequestBody WriteRequest writeRequest) {
+        Product writeRs = productService.create(
+                                        writeRequest.getTitle(),
+                                        writeRequest.getDescription(),
+                                        writeRequest.getCategory()
+                                        );
+
+        return new WriteResponse(writeRs);
+    }
+
+    @Data
+    public static class ModifyRequest {
+        @NotBlank
+        private String title;
+        @NotBlank
+        private String description;
+        @NotBlank
+        private String category;
+    }
+
+    // --- inner 클래스 - WriteResponse
+    @Getter
+    @AllArgsConstructor
+    public static class ModifyResponse {
+        private final Product product;
+    }
+
+    @PatchMapping("/{id}")
+    public ModifyResponse modify(@Valid @RequestBody ModifyRequest modifyRequest, @PathVariable("id")  Long id) {
+        Product product = productService.findyById(id).orElseThrow(() ->  new ResourceNotFoundException(
+                "%d번 상품은 존재하지 않습니다.".formatted(id)
         ));
+
+
+//        if (modifyRequest.authority != "관리자" ) { return new ResourceNotFoundException ("권한이 올바르지 않습니다."); }
+//        >> canModify or cnaAuth
+
+        Product modified = productService.modify(
+                product,
+                modifyRequest.getTitle(),
+                modifyRequest.getDescription(),
+                modifyRequest.getCategory());
+
+        return new ModifyResponse(modified);
+    }
+
+
+    // --- inner 클래스 - WriteResponse
+    @Getter
+    @AllArgsConstructor
+    public static class RemoveResponse {
+        private final Product product;
+    }
+
+    @DeleteMapping("/{id}")
+    public RemoveResponse remove(@PathVariable("id") Long id) {
+        Product product = productService.findyById(id).orElseThrow(() ->  new ResourceNotFoundException(
+                "존재하지 않는 상품입니다."
+        ));
+
+        productService.delete(id);
+
+        return new RemoveResponse(product);
     }
 }

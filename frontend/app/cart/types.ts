@@ -1,5 +1,5 @@
 export type CartItemPlaceholder = {
-  id: string;
+  id: number;
   title: string;
   subtitle?: string;
 };

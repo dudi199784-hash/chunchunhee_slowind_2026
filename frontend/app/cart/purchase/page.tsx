@@ -1,6 +1,6 @@
 import Link from "next/link";
 
-import { getCartItemById } from "@/app/cart/cartData";
+import { fetchCartItemById } from "@/lib/api/cart";
 
 import CartPurchaseClient from "./CartPurchaseClient";
 
@@ -10,7 +10,7 @@ type PurchasePageProps = {
 
 export default async function CartPurchasePage({ searchParams }: PurchasePageProps) {
   const { id } = await searchParams;
-  const product = getCartItemById(id);
+  const product = await fetchCartItemById(id);
 
   return (
     <main className="mx-auto w-full max-w-7xl bg-white px-6 py-12 text-neutral-900 md:px-10 md:py-16">

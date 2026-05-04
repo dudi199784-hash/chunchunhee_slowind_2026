@@ -1,11 +1,13 @@
 import Link from "next/link";
 
 import PopularDesignPagedGrid from "./PopularDesignPagedGrid";
-import { POPULAR_GALLERY_ITEMS } from "@/config/memberDesignPopularDummy";
+import { fetchPopularDesigns } from "@/lib/api/designs";
 
 const CATEGORIES = ["전체", "로고", "유니폼", "기타"] as const;
 
-export default function PopularDesignsPage() {
+export default async function PopularDesignsPage() {
+  const items = await fetchPopularDesigns();
+
   return (
     <main className="mx-auto w-full max-w-7xl bg-white px-6 py-16 text-neutral-900 md:px-10 md:py-20">
       <header className="border-b border-neutral-200 pb-8">
@@ -16,9 +18,10 @@ export default function PopularDesignsPage() {
           인기 상품 · 회원 디자인
         </h1>
         <p className="mt-2 max-w-2xl text-sm text-neutral-600">
-          회원이 게시한 유니폼·로고 디자인을 둘러보세요. 한 페이지는{" "}
+          Spring API에서 받아온 회원 유니폼·로고 디자인입니다. 한 페이지는{" "}
           <strong className="font-medium text-neutral-800">3열 × 4행</strong>
-          (최대 12개)이고, 좌우 화살표와 아래 페이지 번호로 다음 묶음을 볼 수 있습니다.
+          (최대 12개)이고, 좌우 화살표와 아래 페이지 번호로 다음 묶음을 볼 수
+          있습니다.
         </p>
         <div className="mt-6 flex flex-wrap gap-2">
           {CATEGORIES.map((c) => (
@@ -31,7 +34,7 @@ export default function PopularDesignsPage() {
                   : "border-neutral-200 bg-white text-neutral-700 hover:border-neutral-400"
               }`}
               disabled={c !== "전체"}
-              title={c !== "전체" ? "API 연동 후 활성화" : undefined}
+              title={c !== "전체" ? "카테고리 필터 API 연동 후 활성화" : undefined}
             >
               {c}
             </button>
@@ -49,7 +52,13 @@ export default function PopularDesignsPage() {
           </p>
         </div>
 
-        <PopularDesignPagedGrid items={POPULAR_GALLERY_ITEMS} />
+        {items.length > 0 ? (
+          <PopularDesignPagedGrid items={items} />
+        ) : (
+          <p className="mt-8 rounded-md border border-dashed border-neutral-200 bg-neutral-50 py-12 text-center text-sm text-neutral-500">
+            아직 표시할 디자인이 없습니다.
+          </p>
+        )}
       </section>
 
       <p className="mt-12 text-center text-sm text-neutral-500">

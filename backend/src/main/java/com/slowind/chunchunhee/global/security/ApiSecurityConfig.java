@@ -28,10 +28,24 @@ public class ApiSecurityConfig {
                 .securityMatcher("/api/**")
                 .authorizeHttpRequests(
                         auth -> auth
-                                .requestMatchers("/api/*/products").permitAll()
-                                .requestMatchers("/api/*/products/*").permitAll()
-                                .requestMatchers(HttpMethod.POST,"/api/*/members/login").permitAll()
-                                .requestMatchers(HttpMethod.POST,"/api/*/members/logout").permitAll()
+                                // 상품: 읽기는 누구나
+                                .requestMatchers(HttpMethod.GET, "/api/*/products").permitAll()
+                                .requestMatchers(HttpMethod.GET, "/api/*/products/*").permitAll()
+
+                                // 임시
+                                .requestMatchers(HttpMethod.POST, "/api/*/products").permitAll()
+                                .requestMatchers(HttpMethod.POST, "/api/*/products/*").permitAll()
+                                .requestMatchers(HttpMethod.PATCH, "/api/*/products").permitAll()
+                                .requestMatchers(HttpMethod.PATCH, "/api/*/products/*").permitAll()
+                                .requestMatchers(HttpMethod.DELETE, "/api/*/products").permitAll()
+                                .requestMatchers(HttpMethod.DELETE, "/api/*/products/*").permitAll()
+                                // 상품: 쓰기는 관리자만
+//                                .requestMatchers(HttpMethod.POST, "/api/*/products").hasRole("ADMIN")
+//                                .requestMatchers(HttpMethod.PATCH, "/api/*/products/*").hasRole("ADMIN")
+//                                .requestMatchers(HttpMethod.DELETE, "/api/*/products/*").hasRole("ADMIN")
+
+                                .requestMatchers(HttpMethod.POST, "/api/*/members/login").permitAll()
+                                .requestMatchers(HttpMethod.POST, "/api/*/members/logout").permitAll()
                                 .anyRequest().authenticated()
                 )
                 .csrf(csrf -> csrf.disable()) // csrf 토큰 끄기
@@ -47,7 +61,7 @@ public class ApiSecurityConfig {
     @Bean
     public CorsConfigurationSource configurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.addAllowedOrigin("http://localhost:3002");    // 허용할 출처 추가
+        configuration.addAllowedOrigin("http://localhost:3000");    // 허용할 출처 추가
         configuration.addAllowedOrigin("http://cdpn.io");           // 추가 허용 출처
         configuration.addAllowedMethod("*");                        // 모든 HTTP 메서드 헏용
         configuration.addAllowedHeader("*");                        // 모든 요청 헤더 허용

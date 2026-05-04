@@ -18,7 +18,7 @@ public class SecurityConfig {
                         .requestMatchers("/**").permitAll()  // 🔥 AntPath 제거
                 )
                 .csrf(csrf -> csrf
-                        .ignoringRequestMatchers("/h2-console/**") // H2 허용
+                        .ignoringRequestMatchers("/h2-console/**")// H2 허용
                 )
                 .headers(headers -> headers
                         .addHeaderWriter(

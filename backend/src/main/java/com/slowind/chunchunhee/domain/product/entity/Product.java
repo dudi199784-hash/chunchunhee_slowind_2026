@@ -15,12 +15,12 @@ import java.math.BigDecimal;
 @SuperBuilder
 @ToString(callSuper = true)
 public class Product extends BaseEntity {
-    private String name;
+    private String title;
     private String description;
+    private String category;
 //    private String price;
 //    private String image;
 //    private String status;
 //    private String type;
-//    private String category;
 //    private Long stock;
 }

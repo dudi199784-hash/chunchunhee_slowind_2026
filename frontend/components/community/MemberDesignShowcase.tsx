@@ -3,10 +3,8 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 
-import {
-  memberDesignsByLikes,
-  memberDesignsByViews,
-} from "@/config/memberDesignPreview";
+import type { MemberDesignPreview } from "@/config/memberDesignPreview";
+import { fetchShowcaseDesigns } from "@/lib/api/designs";
 import {
   boardCardHoverShell,
   boardCardListItem,
@@ -27,9 +25,21 @@ export default function MemberDesignShowcase({
 }: MemberDesignShowcaseProps) {
   const [mode, setMode] = useState<Mode>("views");
   const [isLoading, setIsLoading] = useState(false);
+  const [designsByViews, setDesignsByViews] = useState<MemberDesignPreview[]>([]);
+  const [designsByLikes, setDesignsByLikes] = useState<MemberDesignPreview[]>([]);
 
-  const items =
-    mode === "views" ? memberDesignsByViews : memberDesignsByLikes;
+  const items = mode === "views" ? designsByViews : designsByLikes;
+
+  useEffect(() => {
+    void (async () => {
+      const [views, likes] = await Promise.all([
+        fetchShowcaseDesigns("views"),
+        fetchShowcaseDesigns("likes"),
+      ]);
+      setDesignsByViews(views);
+      setDesignsByLikes(likes);
+    })();
+  }, []);
 
   useEffect(() => {
     let settleId: number | undefined;
@@ -94,35 +104,41 @@ export default function MemberDesignShowcase({
         </p>
       </div>
 
-      <ul
-        className={`mt-6 grid list-none grid-cols-1 gap-6 transition-opacity duration-300 sm:grid-cols-2 lg:grid-cols-3 ${
-          isLoading ? "opacity-50" : "opacity-100"
-        }`}
-        role="list"
-      >
-        {items.map((item) => (
-          <li key={item.id} className={boardCardListItem}>
-            <div className={boardCardHoverShell}>
-              <article className="flex h-full flex-col overflow-hidden border border-neutral-200 bg-white transition-colors duration-500 ease-in-out hover:border-neutral-300">
-                <div className="aspect-[4/3] w-full bg-neutral-200/80" aria-hidden />
-                <div className="flex flex-1 flex-col gap-1 p-4">
-                  <span className="text-[11px] font-medium uppercase tracking-wide text-neutral-500">
-                    {item.category}
-                  </span>
-                  <h3 className="text-sm font-semibold text-neutral-900 md:text-base">
-                    {item.title}
-                  </h3>
-                  <p className="text-xs text-neutral-500">{item.author}</p>
-                  <MemberDesignMetricsRow
-                    viewsDisplay={item.viewsDisplay}
-                    likesDisplay={item.likesDisplay}
-                  />
-                </div>
-              </article>
-            </div>
-          </li>
-        ))}
-      </ul>
+      {items.length === 0 ? (
+        <p className="mt-6 rounded-md border border-dashed border-neutral-200 bg-white py-10 text-center text-sm text-neutral-500">
+          아직 표시할 커뮤니티 디자인이 없습니다.
+        </p>
+      ) : (
+        <ul
+          className={`mt-6 grid list-none grid-cols-1 gap-6 transition-opacity duration-300 sm:grid-cols-2 lg:grid-cols-3 ${
+            isLoading ? "opacity-50" : "opacity-100"
+          }`}
+          role="list"
+        >
+          {items.map((item) => (
+            <li key={item.id} className={boardCardListItem}>
+              <div className={boardCardHoverShell}>
+                <article className="flex h-full flex-col overflow-hidden border border-neutral-200 bg-white transition-colors duration-500 ease-in-out hover:border-neutral-300">
+                  <div className="aspect-[4/3] w-full bg-neutral-200/80" aria-hidden />
+                  <div className="flex flex-1 flex-col gap-1 p-4">
+                    <span className="text-[11px] font-medium uppercase tracking-wide text-neutral-500">
+                      {item.category}
+                    </span>
+                    <h3 className="text-sm font-semibold text-neutral-900 md:text-base">
+                      {item.title}
+                    </h3>
+                    <p className="text-xs text-neutral-500">{item.author}</p>
+                    <MemberDesignMetricsRow
+                      viewsDisplay={item.viewsDisplay}
+                      likesDisplay={item.likesDisplay}
+                    />
+                  </div>
+                </article>
+              </div>
+            </li>
+          ))}
+        </ul>
+      )}
     </section>
   );
 }
