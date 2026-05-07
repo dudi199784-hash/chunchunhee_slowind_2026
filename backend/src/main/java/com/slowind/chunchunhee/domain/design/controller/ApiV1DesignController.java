@@ -25,9 +25,19 @@ public class ApiV1DesignController {
     @Getter
     @AllArgsConstructor
     public static class DesignsResponse {
-        private final List<Design> designList;
+        private final List<DesignDto> designs;
     }
 
+    @Getter
+    @AllArgsConstructor
+    public static class DesignDto {
+        private final Long id;
+        private final Long memberSerial;
+        private final Long productSerial;
+        private final String designTitle;
+        private final String designDescription;
+        private final String designCategory;
+    }
     // --- 다건 조회
     @GetMapping("")
     public DesignsResponse getDesigns(
@@ -35,7 +45,19 @@ public class ApiV1DesignController {
             @RequestParam(value = "category", required = false) String category
     ) {
         List<Design> designs = designService.getList(userSerial, category);
-        return new DesignsResponse(designs);
+
+        List<DesignDto> items = designs.stream()
+                .map(d -> new DesignDto(
+                        d.getId(),
+                        d.getMember().getId(),    // 여기
+                        d.getProduct().getId(),    // 여기
+                        d.getDesignTitle(),
+                        d.getDesignDescription(),
+                        d.getDesignCategory()
+                ))
+                .toList();
+
+        return new DesignsResponse(items);
     }
 
     // --- inner 클래스 단건조회 응답
@@ -59,7 +81,7 @@ public class ApiV1DesignController {
     @Data
     public static class NewDesignRequest {
         @NotNull
-        private Long userSerial;
+        private Long memberSerial;
 
         @NotNull
         private Long productSerial;
@@ -84,7 +106,7 @@ public class ApiV1DesignController {
     @PostMapping("")
     public NewDesignResponse newDesign(@Valid @RequestBody NewDesignRequest newDesignRequest){
         Design design = designService.create(
-                                newDesignRequest.getUserSerial(),
+                                newDesignRequest.getMemberSerial(),
                                 newDesignRequest.getProductSerial(),
                                 newDesignRequest.getDesignTitle(),
                                 newDesignRequest.getDesignDescription(),
@@ -98,7 +120,7 @@ public class ApiV1DesignController {
     @Data
     public static class ModifyDesignRequest {
         @NotNull
-        private Long userSerial;
+        private Long memberSerial;
 
         @NotNull
         private Long productSerial;
@@ -129,7 +151,7 @@ public class ApiV1DesignController {
 
         Design updateDesign = designService.update(
                 design,
-                modifyDesignRequest.getUserSerial(),
+                modifyDesignRequest.getMemberSerial(),
                 modifyDesignRequest.getProductSerial(),
                 modifyDesignRequest.getDesignTitle(),
                 modifyDesignRequest.getDesignDescription(),

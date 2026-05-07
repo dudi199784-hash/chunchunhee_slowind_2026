@@ -4,6 +4,7 @@ import com.slowind.chunchunhee.domain.member.entity.Member;
 import com.slowind.chunchunhee.domain.product.entity.Product;
 import com.slowind.chunchunhee.global.jpa.BaseEntity;
 import jakarta.persistence.Entity;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
@@ -18,12 +19,12 @@ import lombok.experimental.SuperBuilder;
 public class Design extends BaseEntity {
     // 유저 정보
     @ManyToOne
+    @JoinColumn(name = "member_id")
     private Member member;
-
     // 상품 정보
     @ManyToOne
+    @JoinColumn(name = "product_id")
     private Product product;
-
     // 디자인
     private String designTitle;
     private String designDescription;

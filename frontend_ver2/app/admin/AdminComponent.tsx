@@ -7,7 +7,7 @@ export default function AdminComponent() {
       <Link href="/admin/products">Products</Link><br />
       <Link href="/admin/orders">Orders</Link><br />
       <Link href="/admin/members">Members</Link><br />
-      <Link href="/admin/design">Design</Link><br />
+      <Link href="/admin/designs">Design</Link><br />
       <Link href="/admin/community">Community</Link><br />
       <Link href="/admin/cart">Cart</Link><br />
       <Link href="/admin/login">Login</Link><br />
