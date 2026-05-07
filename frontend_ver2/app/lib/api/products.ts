@@ -1,5 +1,5 @@
 import { http } from "./http";
-
+const PRODUCT_API_BASE_URL = "/api/v1/products"
 /** POST `/api/v1/products` body (`WriteRequest`) */
 export interface CreateProductBody {
   title: string;
@@ -30,7 +30,7 @@ export interface ProductsListResponse {
 }
 
 export const getProducts = async (): Promise<ProductsListResponse> => {
-  const response = await http.get<ProductsListResponse>("/api/v1/products");
+  const response = await http.get<ProductsListResponse>(PRODUCT_API_BASE_URL);
   return response.data;
 };
 
@@ -40,21 +40,21 @@ export interface ProductDetailResponse {
 }
 
 export const getProduct = async (id: number): Promise<ProductDetailResponse> => {
-  const response = await http.get<ProductDetailResponse>(`/api/v1/products/${id}`);
+  const response = await http.get<ProductDetailResponse>(`${PRODUCT_API_BASE_URL}/${id}`);
   return response.data;
 };
 
 export const createProduct = async (product: CreateProductBody) => {
-  const response = await http.post("/api/v1/products", product);
+  const response = await http.post(PRODUCT_API_BASE_URL, product);
   return response.data;
 };
 
 export const updateProduct = async (id: number, product: UpdateProductBody) => {
-  const response = await http.patch(`/api/v1/products/${id}`, product);
+  const response = await http.patch(`${PRODUCT_API_BASE_URL}/${id}`, product);
   return response.data;
 };
 
 export const deleteProduct = async (id: number) => {
-  const response = await http.delete(`/api/v1/products/${id}`);
+  const response = await http.delete(`${PRODUCT_API_BASE_URL}/${id}`);
   return response.data;
 };

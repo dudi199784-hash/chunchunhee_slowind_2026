@@ -20,7 +20,7 @@ import java.util.List;
 public class ApiV1ProductController {
     private final ProductService productService;
 
-    // --- inner 클래스 - ProductsResponse
+    // --- inner 클래스 - 다건조회 응답
     @Getter
     @AllArgsConstructor
     public static class ProductsResponse {
@@ -35,7 +35,7 @@ public class ApiV1ProductController {
     }
 
 
-    // --- inner 클래스 - ProductResponse
+    // --- inner 클래스 - 단건조회 응답
     @Getter
     @AllArgsConstructor
     public static class ProductResponse {
@@ -52,6 +52,7 @@ public class ApiV1ProductController {
                 ));
     }
 
+    // --- inner 클래스 - 상품게시 요청
     @Data
     public static class WriteRequest {
         @NotBlank
@@ -62,25 +63,26 @@ public class ApiV1ProductController {
         private String category;
     }
 
-    // --- inner 클래스 - WriteResponse
+    // --- inner 클래스 - 상품게시 응답
     @Getter
     @AllArgsConstructor
     public static class WriteResponse {
         private final Product product;
     }
 
-    // ---
+    // --- 새로운 상품 게시
     @PostMapping("")
     public WriteResponse write(@Valid @RequestBody WriteRequest writeRequest) {
-        Product writeRs = productService.create(
+        Product writeProduct = productService.create(
                                         writeRequest.getTitle(),
                                         writeRequest.getDescription(),
                                         writeRequest.getCategory()
                                         );
 
-        return new WriteResponse(writeRs);
+        return new WriteResponse(writeProduct);
     }
 
+    // --- inner 클래스 - 상품수정 요청
     @Data
     public static class ModifyRequest {
         @NotBlank
@@ -91,13 +93,14 @@ public class ApiV1ProductController {
         private String category;
     }
 
-    // --- inner 클래스 - WriteResponse
+    // --- inner 클래스 - 상품수정 응답
     @Getter
     @AllArgsConstructor
     public static class ModifyResponse {
         private final Product product;
     }
 
+    // --- 상품정보 수정
     @PatchMapping("/{id}")
     public ModifyResponse modify(@Valid @RequestBody ModifyRequest modifyRequest, @PathVariable("id")  Long id) {
         Product product = productService.findyById(id).orElseThrow(() ->  new ResourceNotFoundException(
@@ -117,14 +120,14 @@ public class ApiV1ProductController {
         return new ModifyResponse(modified);
     }
 
-
-    // --- inner 클래스 - WriteResponse
+    // --- inner 클래스 - 상품제거 응답
     @Getter
     @AllArgsConstructor
     public static class RemoveResponse {
         private final Product product;
     }
 
+    // --- 상품 삭제
     @DeleteMapping("/{id}")
     public RemoveResponse remove(@PathVariable("id") Long id) {
         Product product = productService.findyById(id).orElseThrow(() ->  new ResourceNotFoundException(
@@ -132,7 +135,6 @@ public class ApiV1ProductController {
         ));
 
         productService.delete(id);
-
         return new RemoveResponse(product);
     }
 }

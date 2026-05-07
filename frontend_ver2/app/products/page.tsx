@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { getProducts } from "../lib/api/products";
 
 export default async function Products() {
@@ -7,12 +8,14 @@ export default async function Products() {
       Products
     <br />--------------------------------
       {products.map((product) => (
+        <Link href={`/products/${product.id}`} key={product.id}>
         <div key={product.id}>
           <h2>{product.title}</h2>
           <p>{product.description}</p>
           <p>{product.category}</p>
           --------------------------------ㅇ
         </div>
+        </Link>
       ))}
     </div>
   );
