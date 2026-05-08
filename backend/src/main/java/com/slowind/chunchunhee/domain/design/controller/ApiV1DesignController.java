@@ -79,7 +79,7 @@ public class ApiV1DesignController {
                         "%d번 디자인은 존재하지 않습니다.".formatted(id)
                 ));
 
-        Design De = new DesignDto(
+        return new DesignDto(
                 d.getId(),
                 d.getMember().getId(),
                 d.getProduct().getId(),
@@ -99,6 +99,12 @@ public class ApiV1DesignController {
 
         @NotNull
         private Long productSerial;
+
+        @NotNull
+        private String username;
+
+        @NotNull
+        private String title;
 
         @NotBlank
         private String designTitle;

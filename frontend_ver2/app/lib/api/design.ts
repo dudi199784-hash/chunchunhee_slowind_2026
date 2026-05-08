@@ -68,7 +68,6 @@ export interface DesignDetailResponse {
 
 export const getDesign = async (id: number): Promise<DesignDetailResponse> => {
   const response = await http.get<DesignDetailResponse>(`${DESIGN_API_BASE_URL}/${id}`);
-  console.log(response.data);
   return response.data;
 };
 
