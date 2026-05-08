@@ -7,10 +7,10 @@ export interface Design {
   productSerial: number;
   username: string;
   title: string;
+  designCategory: string;
   id: number;
   designTitle: string;
   designDescription: string;
-  designCategory: string;
   createTime?: string;
   updateTime?: string;
 }
@@ -58,10 +58,10 @@ export interface DesignDetailResponse {
   productSerial: number;
   username: string;
   title: string;
+  designCategory: string;
   id: number;
   designTitle: string;
   designDescription: string;
-  designCategory: string;
   createTime?: string;
   updateTime?: string;
 }

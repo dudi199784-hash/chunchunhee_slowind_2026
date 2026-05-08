@@ -6,8 +6,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 
 public interface DesignRepository extends JpaRepository<Design,Long> {
-    List<Design> findByDesignCategory(String category);
+    List<Design> findByProductCategory(String category);
     List<Design> findByMemberId(Long userSerial);
-    List<Design> findByMemberIdAndDesignCategory(Long userSerial, String category);
+    List<Design> findByMemberIdAndProductCategory(Long userSerial, String category);
 
 }

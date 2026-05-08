@@ -41,7 +41,7 @@ public class DesignService {
     public List<Design> getList(Long userSerial, String category) {
 
         if ( userSerial != null && category != null ) {
-            return designRepository.findByMemberIdAndDesignCategory(userSerial, category);
+            return designRepository.findByMemberIdAndProductCategory(userSerial, category);
         }
 
         if ( userSerial != null ) {
@@ -49,7 +49,7 @@ public class DesignService {
         }
 
         if ( category != null ) {
-            return designRepository.findByDesignCategory(category);
+            return designRepository.findByProductCategory(category);
         }
 
         return designRepository.findAll();
@@ -62,6 +62,7 @@ public class DesignService {
     public Optional<Design> findById(Long id) {
         return designRepository.findById(id);
     }
+
     public Design create(@NotNull Long memberSerial, @NotNull Long productSerial, @NotBlank String designTitle, @NotBlank String designDescription, @NotBlank String designCategory) {
 
         Member member = valiMember(memberSerial);
@@ -72,7 +73,6 @@ public class DesignService {
                 .product(product)
                 .designTitle(designTitle)
                 .designDescription(designDescription)
-                .designCategory(designCategory)
                 .build();
         designRepository.save(design);
         return design;
@@ -87,7 +87,6 @@ public class DesignService {
         design.setProduct(product);
         design.setDesignTitle(designTitle);
         design.setDesignDescription(designDescription);
-        design.setDesignCategory(designCategory);
 
         designRepository.save(design);
         return design;

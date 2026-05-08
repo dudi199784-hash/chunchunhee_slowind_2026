@@ -20,9 +20,9 @@ export default function DesignAdminRow({ design }: Props) {
     <div>
       <h2>{design.designTitle}</h2>
       <p>{design.designDescription}</p>
-      <p>{design.designCategory}</p>
       <p>유저: {design.username}</p>
       <p>상품: {design.title}</p>
+      <p>카테고리: {design.designCategory}</p>
       <p>
         <Link href={`/admin/designs/${design.id}`}>수정</Link>{" "}
         <button type="button" onClick={handleDelete}>

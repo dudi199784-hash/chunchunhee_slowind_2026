@@ -63,6 +63,30 @@ public class ApiSecurityConfig {
                                 .requestMatchers(HttpMethod.PATCH, "/api/*/designs/*").permitAll()
                                 .requestMatchers(HttpMethod.DELETE, "/api/*/designs").permitAll()
                                 .requestMatchers(HttpMethod.DELETE, "/api/*/designs/*").permitAll()
+
+                                // 카트: 읽기는 누구나
+                                .requestMatchers(HttpMethod.GET, "/api/*/carts").permitAll()
+                                .requestMatchers(HttpMethod.GET, "/api/*/carts/*").permitAll()
+
+                                // 임시
+                                .requestMatchers(HttpMethod.POST, "/api/*/carts").permitAll()
+                                .requestMatchers(HttpMethod.POST, "/api/*/carts/*").permitAll()
+                                .requestMatchers(HttpMethod.PATCH, "/api/*/carts").permitAll()
+                                .requestMatchers(HttpMethod.PATCH, "/api/*/carts/*").permitAll()
+                                .requestMatchers(HttpMethod.DELETE, "/api/*/carts").permitAll()
+                                .requestMatchers(HttpMethod.DELETE, "/api/*/carts/*").permitAll()
+
+                                // 오더: 읽기는 누구나
+                                .requestMatchers(HttpMethod.GET, "/api/*/orders").permitAll()
+                                .requestMatchers(HttpMethod.GET, "/api/*/orders/*").permitAll()
+
+                                // 임시
+                                .requestMatchers(HttpMethod.POST, "/api/*/orders").permitAll()
+                                .requestMatchers(HttpMethod.POST, "/api/*/orders/*").permitAll()
+                                .requestMatchers(HttpMethod.PATCH, "/api/*/orders").permitAll()
+                                .requestMatchers(HttpMethod.PATCH, "/api/*/orders/*").permitAll()
+                                .requestMatchers(HttpMethod.DELETE, "/api/*/orders").permitAll()
+                                .requestMatchers(HttpMethod.DELETE, "/api/*/orders/*").permitAll()
                                 // 상품: 쓰기는 관리자만
 //                                .requestMatchers(HttpMethod.POST, "/api/*/products").hasRole("ADMIN")
 //                                .requestMatchers(HttpMethod.PATCH, "/api/*/products/*").hasRole("ADMIN")

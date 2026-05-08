@@ -1,5 +1,7 @@
 package com.slowind.chunchunhee.global.initData;
 
+import com.slowind.chunchunhee.domain.cart.service.CartService;
+import com.slowind.chunchunhee.domain.design.entity.Design;
 import com.slowind.chunchunhee.domain.design.service.DesignService;
 import com.slowind.chunchunhee.domain.member.entity.Member;
 import com.slowind.chunchunhee.domain.member.service.MemberService;
@@ -19,9 +21,11 @@ public class NotProd {
     CommandLineRunner initData(
             ProductService productService,
             MemberService memberService,
-            DesignService designService
+            DesignService designService,
+            CartService cartService
     ) {
         return args -> {
+
             productService.create("상품명1", "서술1", "로고");
             productService.create("상품명2", "서술2", "유니폼");
             productService.create("상품명3", "서술3", "기타");
@@ -41,6 +45,29 @@ public class NotProd {
             designService.create( member1.getId(), product1.getId(), "디자인1", "설명1", "로고" );
             designService.create( member2.getId(), product2.getId(), "디자인2", "설명2", "유니폼" );
             designService.create( member3.getId(), product3.getId(), "디자인3", "설명3", "기타" );
+
+            Design design1 = designService.findById(1L).get();
+            Design design2 = designService.findById(2L).get();
+            Design design3 = designService.findById(3L).get();
+
+            cartService.create(1L,
+                    design1.getId(),
+                    design1.getMember().getId(),
+                    design1.getProduct().getId(),
+                    design1.getMember().getUsername()
+                    );
+            cartService.create(2L,
+                    design2.getId(),
+                    design2.getMember().getId(),
+                    design2.getProduct().getId(),
+                    design2.getMember().getUsername()
+            );
+            cartService.create(3L,
+                    design3.getId(),
+                    design3.getMember().getId(),
+                    design3.getProduct().getId(),
+                    design3.getMember().getUsername()
+            );
         };
     }
 }

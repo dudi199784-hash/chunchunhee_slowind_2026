@@ -19,7 +19,15 @@ export default function DesignCreateForm() {
     e.preventDefault();
     setPending(true);
     try {
-      await createDesign({ memberSerial, productSerial, username, title, designTitle, designDescription, designCategory });
+      await createDesign({
+        memberSerial,
+        productSerial,
+        username,
+        title,
+        designTitle,
+        designDescription,
+        designCategory,
+      });
       router.push("/admin/designs");
       router.refresh();
     } finally {
@@ -93,7 +101,7 @@ export default function DesignCreateForm() {
         />
       </div>
       <div>
-        <label htmlFor="designCategory">디자인 카테고리</label>
+        <label htmlFor="designCategory">상품 카테고리</label>
         <input
           id="designCategory"
           name="designCategory"

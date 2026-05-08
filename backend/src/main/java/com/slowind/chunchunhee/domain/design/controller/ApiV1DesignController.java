@@ -57,7 +57,7 @@ public class ApiV1DesignController {
                         d.getProduct().getTitle(),
                         d.getDesignTitle(),
                         d.getDesignDescription(),
-                        d.getDesignCategory()
+                        d.getProduct().getCategory()
                 ))
                 .toList();
 
@@ -87,7 +87,7 @@ public class ApiV1DesignController {
                 d.getProduct().getTitle(),
                 d.getDesignTitle(),
                 d.getDesignDescription(),
-                d.getDesignCategory()
+                d.getProduct().getCategory()
         );
     }
 
@@ -177,8 +177,7 @@ public class ApiV1DesignController {
                 modifyDesignRequest.getDesignDescription(),
                 modifyDesignRequest.getDesignCategory());
 
-
-        return new  ModifyDesignResponse(design);
+        return new  ModifyDesignResponse(updateDesign);
     }
 
     // --- inner 클래스 - 디자인 삭제 응답

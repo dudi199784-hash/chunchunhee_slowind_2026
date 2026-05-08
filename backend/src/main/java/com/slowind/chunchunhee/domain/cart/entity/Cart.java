@@ -1,5 +1,6 @@
-package com.slowind.chunchunhee.domain.design.entity;
+package com.slowind.chunchunhee.domain.cart.entity;
 
+import com.slowind.chunchunhee.domain.design.entity.Design;
 import com.slowind.chunchunhee.domain.member.entity.Member;
 import com.slowind.chunchunhee.domain.product.entity.Product;
 import com.slowind.chunchunhee.global.jpa.BaseEntity;
@@ -16,20 +17,24 @@ import lombok.experimental.SuperBuilder;
 @NoArgsConstructor
 @SuperBuilder
 @ToString(callSuper = true)
-public class Design extends BaseEntity {
+public class Cart extends BaseEntity {
 
-    // --- 유저 정보
+    // 구매 유저 정보
     @ManyToOne
-    @JoinColumn(name = "member_id")
+    @JoinColumn( name = "member_id")
     private Member member;
 
-    // --- 상품 정보
+    // 상품 정보
     @ManyToOne
-    @JoinColumn(name = "product_id")
+    @JoinColumn( name = "product_id")
     private Product product;
 
-    // --- 디자인
-    private String designTitle;
-    private String designDescription;
-//    private String designCategory;
+    // 디자인 정보
+    @ManyToOne
+    @JoinColumn( name = "design_id")
+    private Design design;
+
+    // 카트
+    private String quantity;
+    private String size;
 }

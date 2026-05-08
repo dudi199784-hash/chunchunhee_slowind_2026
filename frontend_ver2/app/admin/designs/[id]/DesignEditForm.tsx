@@ -71,16 +71,6 @@ export default function DesignEditForm({ design }: Props) {
         />
       </div>
       <div>
-        <label htmlFor="category">카테고리</label>
-        <input
-          id="category"
-          name="category"
-          value={designCategory}
-          onChange={(e) => setDesignCategory(e.target.value)}
-          required
-        />
-      </div>
-      <div>
         <label htmlFor="username">제작자</label>
         <input
           id="username"
@@ -97,6 +87,16 @@ export default function DesignEditForm({ design }: Props) {
           name="productTitle"
           value={title}
           onChange={(e) => setTitle(e.target.value)}
+          required
+        />
+      </div>
+      <div>
+        <label htmlFor="productCategory">상품 카테고리</label>
+        <input
+          id="productCategory"
+          name="productCategory"
+          value={designCategory}
+          onChange={(e) => setDesignCategory(e.target.value)}
           required
         />
       </div>
