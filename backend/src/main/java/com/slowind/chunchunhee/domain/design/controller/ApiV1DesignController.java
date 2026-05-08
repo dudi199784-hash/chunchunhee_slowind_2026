@@ -34,6 +34,8 @@ public class ApiV1DesignController {
         private final Long id;
         private final Long memberSerial;
         private final Long productSerial;
+        private final String username;
+        private final String title;
         private final String designTitle;
         private final String designDescription;
         private final String designCategory;
@@ -49,8 +51,10 @@ public class ApiV1DesignController {
         List<DesignDto> items = designs.stream()
                 .map(d -> new DesignDto(
                         d.getId(),
-                        d.getMember().getId(),    // 여기
-                        d.getProduct().getId(),    // 여기
+                        d.getMember().getId(),
+                        d.getProduct().getId(),
+                        d.getMember().getUsername(),
+                        d.getProduct().getTitle(),
                         d.getDesignTitle(),
                         d.getDesignDescription(),
                         d.getDesignCategory()
@@ -69,12 +73,22 @@ public class ApiV1DesignController {
 
     // --- 단건 조회
     @GetMapping("{id}")
-    public DesignResponse getDesign(@PathVariable("id") Long id){
-        return designService.getDesign(id)
-                .map( DesignResponse::new )
+    public DesignDto getDesign(@PathVariable("id") Long id){
+        Design d = designService.getDesign(id)
                 .orElseThrow(() -> new ResourceNotFoundException(
                         "%d번 디자인은 존재하지 않습니다.".formatted(id)
                 ));
+
+        Design De = new DesignDto(
+                d.getId(),
+                d.getMember().getId(),
+                d.getProduct().getId(),
+                d.getMember().getUsername(),
+                d.getProduct().getTitle(),
+                d.getDesignTitle(),
+                d.getDesignDescription(),
+                d.getDesignCategory()
+        );
     }
 
     // --- inner 클래스 - 디자인 생성 요청

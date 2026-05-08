@@ -2,6 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import type { Design } from "../../lib/api/design";
+import { deleteDesign } from "../../lib/api/design";
 import Link from "next/link";
 
 type Props = { design: Design };
@@ -10,17 +11,18 @@ export default function DesignAdminRow({ design }: Props) {
   const router = useRouter();
 
   const handleDelete = async () => {
-    if (!globalThis.confirm("해당 상품을 삭제할까요?")) return;
+    if (!globalThis.confirm("해당 디자인을 삭제할까요?")) return;
+    await deleteDesign(design.id);
     router.refresh();
   };
 
   return (
     <div>
-      <p>{design.memberSerial}</p>
-      <p>{design.productSerial}</p>
       <h2>{design.designTitle}</h2>
       <p>{design.designDescription}</p>
       <p>{design.designCategory}</p>
+      <p>유저: {design.username}</p>
+      <p>상품: {design.title}</p>
       <p>
         <Link href={`/admin/designs/${design.id}`}>수정</Link>{" "}
         <button type="button" onClick={handleDelete}>
