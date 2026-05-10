@@ -30,4 +30,5 @@ public class Order extends BaseEntity {
 
     private int quantity;
     private int totalPrice;
+    private String status;
 }

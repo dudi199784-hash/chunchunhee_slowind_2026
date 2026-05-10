@@ -87,6 +87,7 @@ public class ApiSecurityConfig {
                                 .requestMatchers(HttpMethod.PATCH, "/api/*/orders/*").permitAll()
                                 .requestMatchers(HttpMethod.DELETE, "/api/*/orders").permitAll()
                                 .requestMatchers(HttpMethod.DELETE, "/api/*/orders/*").permitAll()
+                                .requestMatchers(HttpMethod.PATCH, "/api/*/orders/**").permitAll()
                                 // 상품: 쓰기는 관리자만
 //                                .requestMatchers(HttpMethod.POST, "/api/*/products").hasRole("ADMIN")
 //                                .requestMatchers(HttpMethod.PATCH, "/api/*/products/*").hasRole("ADMIN")

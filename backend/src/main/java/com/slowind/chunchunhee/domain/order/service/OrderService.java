@@ -8,6 +8,7 @@ import com.slowind.chunchunhee.domain.order.entity.Order;
 import com.slowind.chunchunhee.domain.order.entity.OrderItem;
 import com.slowind.chunchunhee.domain.order.repository.OrderRepository;
 import jakarta.transaction.Transactional;
+import jakarta.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -74,4 +75,18 @@ public class OrderService {
         return order;
     }
 
+//    @Transactional
+//    public OrderItem update(Long orderId, String userName, String designerName) {
+//    }
+
+    public void updateStatus(Long orderId, @NotBlank String status) {
+        Order order = orderRepository.findById(orderId)
+                .orElseThrow();
+        order.setStatus(status);
+        orderRepository.save(order);
+    }
+
+    public void delete(Long orderId) {
+        orderRepository.deleteById(orderId);
+    }
 }
