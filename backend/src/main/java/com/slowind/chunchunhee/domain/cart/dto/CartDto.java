@@ -2,11 +2,13 @@ package com.slowind.chunchunhee.domain.cart.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.Setter;
 
 @Getter
 @AllArgsConstructor
 public class CartDto {
     private Long cartId;
+
     private Long designerId;
     private Long customerId;
     private Long productId;

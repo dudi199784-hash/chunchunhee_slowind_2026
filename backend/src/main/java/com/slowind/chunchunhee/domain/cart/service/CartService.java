@@ -38,6 +38,11 @@ public class CartService {
                 .toList();
     }
 
+    public List<Cart> getUserOrders(Long id,Long userSerial) {
+        List<Cart> carts = cartRepository.findByIdAndMemberId(id, userSerial);
+        return carts;
+    }
+
     public Optional<Cart> getCart(@Valid Long id) {
         return cartRepository.findById(id);
     }
@@ -74,22 +79,22 @@ public class CartService {
                 .member(member)
                 .product(product)
                 .design(design)
-                .quantity("10")
+                .quantity(10)
                 .size("m size")
                 .build();
-
-        return cartRepository.save(cart);
+        cartRepository.save(cart);
+        return cart;
     }
 
     // --- 수정
-    public Cart update(Cart cart, @NotNull Long cartId, @NotNull Long productId, @NotNull Long customerId, @NotNull Long designId, @NotBlank String customerName, @NotBlank String designTitle) {
+    public Cart update(Cart cart, @NotNull Long cartId, @NotNull Long productId, @NotNull Long customerId, @NotNull Long designId, @NotBlank String customerName, @NotBlank String designTitle, @NotBlank String size, @NotNull Integer quantity) {
 
         Product product = findProductById(productId);
         Member member = findMemberById(customerId);
         Design design = findDesignById(designId);
 
-        cart.setQuantity("10");
-        cart.setSize("m size");
+        cart.setQuantity(quantity);
+        cart.setSize(size);
 
         cartRepository.save(cart);
         return cart;

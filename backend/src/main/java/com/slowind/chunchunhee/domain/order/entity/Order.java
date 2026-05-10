@@ -1,12 +1,12 @@
 package com.slowind.chunchunhee.domain.order.entity;
 
-import com.slowind.chunchunhee.domain.cart.entity.Cart;
+import com.slowind.chunchunhee.domain.member.entity.Member;
 import com.slowind.chunchunhee.global.jpa.BaseEntity;
-import jakarta.persistence.Entity;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
+import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
+
+import java.util.List;
 
 
 @Entity
@@ -16,11 +16,18 @@ import lombok.experimental.SuperBuilder;
 @NoArgsConstructor
 @SuperBuilder
 @ToString(callSuper = true)
+@Table(name = "orders")
 public class Order extends BaseEntity {
 
+    // 구매 유저 정보
     @ManyToOne
-    @JoinColumn( name = "cart_id" )
-    private Cart cart;
+    @JoinColumn( name = "member_id")
+    private Member member;
 
-    private String cashStyle;
+    // 주문 정보
+    @OneToMany(mappedBy = "order" , cascade = CascadeType.ALL)
+    private List<OrderItem> items;
+
+    private int quantity;
+    private int totalPrice;
 }

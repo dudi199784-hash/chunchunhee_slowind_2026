@@ -8,6 +8,7 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
+import lombok.Data;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -63,8 +64,7 @@ public class ApiV1CartController {
     }
 
     // --- inner 클래스 카트 추가 요청
-    @Getter
-    @AllArgsConstructor
+    @Data
     public static class AddCartRequest {
         @NotNull
         private Long cartId;
@@ -101,8 +101,7 @@ public class ApiV1CartController {
     }
 
     // --- inner 클래스 카트 수정 요청
-    @Getter
-    @AllArgsConstructor
+    @Data
     public static class ModifyCartRequest {
         @NotNull
         private Long cartId;
@@ -117,6 +116,12 @@ public class ApiV1CartController {
         private String customerName;
         @NotBlank
         private String designTitle;
+
+        @NotBlank
+        private String size;
+        @NotNull
+        private Integer quantity;
+
     }
 
     @Getter
@@ -125,7 +130,7 @@ public class ApiV1CartController {
         private final Cart cart;
     }
 
-    @PatchMapping("{id}")
+    @PatchMapping("/{id}")
     public ModifyCartResponse modifyCart(@Valid @RequestBody ModifyCartRequest modifyCartRequest, @PathVariable("id") Long id) {
         Cart cart = cartService.findById(id).orElseThrow(() -> new ResourceNotFoundException(
                 "%d번 카트상품은 존재하지 않습니다.".formatted(id)
@@ -138,7 +143,9 @@ public class ApiV1CartController {
                 modifyCartRequest.getCustomerId(),
                 modifyCartRequest.getDesignId(),
                 modifyCartRequest.getCustomerName(),
-                modifyCartRequest.getDesignTitle()
+                modifyCartRequest.getDesignTitle(),
+                modifyCartRequest.getSize(),
+                modifyCartRequest.getQuantity()
         );
 
         return new ModifyCartResponse(updateCart);
@@ -150,7 +157,7 @@ public class ApiV1CartController {
     public static class RemoveCartResponse {
         private final Cart cart;
     }
-    @DeleteMapping("{id}")
+    @DeleteMapping("/{id}")
     public RemoveCartResponse remove(@PathVariable("id") Long id) {
         Cart cart = cartService.findById(id).orElseThrow(() -> new ResourceNotFoundException(
                 "%d번 카트는 존재하지않습니다.".formatted(id)
