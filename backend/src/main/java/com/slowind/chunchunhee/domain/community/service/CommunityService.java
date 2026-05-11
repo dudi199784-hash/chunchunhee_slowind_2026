@@ -49,8 +49,8 @@ public class CommunityService {
                 .design(design)
                 .postTitle(title)
                 .postContent(content)
-                .like(0)
-                .view(0)
+                .likeCount(0)
+                .viewCount(0)
                 .numberOfComments(0)
                 .build();
 
@@ -69,4 +69,11 @@ public class CommunityService {
         communityRepository.deleteById(id);
     }
 
+    public Post updatePostLike(Post post, int likeCount, int viewCount,  int numberOfComments) {
+        post.setLikeCount(likeCount);
+        post.setViewCount(viewCount);
+        post.setNumberOfComments(numberOfComments);
+        communityRepository.save(post);
+        return post;
+    }
 }

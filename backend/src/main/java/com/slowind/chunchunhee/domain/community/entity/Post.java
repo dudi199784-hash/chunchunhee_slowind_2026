@@ -13,7 +13,6 @@ import org.springframework.stereotype.Service;
 @Entity
 @Getter
 @Setter
-@Service
 @AllArgsConstructor
 @NoArgsConstructor
 @SuperBuilder
@@ -34,7 +33,7 @@ public class Post extends BaseEntity {
     private String postTitle;
     private String postContent;
 
-    private int like;
-    private int view;
+    private int likeCount;
+    private int viewCount;
     private int numberOfComments;
 }

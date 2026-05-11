@@ -80,8 +80,34 @@ public class ApiV1CommunityController {
                 modifyPostRequest.getTitle(),
                 modifyPostRequest.getContent()
         );
-
         return new ModifyPostResponse(updatedPost);
+    }
+
+    @Data
+    public static class ModifyPostLikeViewRequest {
+        private int likeCount;
+        private int viewCount;
+        private int numberOfComments;
+    }
+
+    @Getter
+    @AllArgsConstructor
+    public static class ModifyPostLikeViewResponse {
+        private final Post post;
+    }
+
+    @PatchMapping("/{id}/like")
+    public ModifyPostLikeViewResponse modifyPostLike(@Valid @PathVariable("id") Long id, @RequestBody ModifyPostLikeViewRequest modifyPostLikeViewRequest) {
+        Post post = communityService.findById(id).orElseThrow(() -> new ResourceNotFoundException(
+                "%d번 게시글은 존재하지 않습니다.".formatted(id)
+        ));
+        Post updatedPostLike = communityService.updatePostLike(
+                post,
+                modifyPostLikeViewRequest.getLikeCount(),
+                modifyPostLikeViewRequest.getViewCount(),
+                modifyPostLikeViewRequest.getNumberOfComments()
+        );
+        return new ModifyPostLikeViewResponse(updatedPostLike);
     }
 
     @Getter
