@@ -8,6 +8,7 @@ import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,6 +20,7 @@ import java.util.Optional;
 public class MemberService {
     private final MemberRepository memberRepository;
     private final JwtProvider jwtProvider;
+    private final PasswordEncoder passwordEncoder;
 
     // 모든 사용자 --- 유저 조회
     public List<Member> getMemberLlist() {
@@ -40,7 +42,7 @@ public class MemberService {
         Member member = Member.builder()
                 .username(username)
                 .userId(userId)
-                .userpassword(userpassword)
+                .userpassword(passwordEncoder.encode(userpassword))
                 .build();
 
         memberRepository.save(member);
@@ -51,7 +53,7 @@ public class MemberService {
     public Member updateMember(Member member, @NotBlank String username, @NotBlank String userId, @NotBlank String userpassword) {
         member.setUsername(username);
         member.setUserId(userId);
-        member.setUserpassword(userpassword);
+        member.setUserpassword(passwordEncoder.encode(userpassword));
 
         memberRepository.save(member);
         return member;
@@ -69,10 +71,14 @@ public class MemberService {
         private String accessToken;
     }
 
-    public AuthAndMakeTokensResponseBody authAndMakeTokens(@NotBlank String username, @NotBlank String password) {
-        Member member = memberRepository.findByUsername(username).orElseThrow(() -> new ResourceNotFoundException(
-                "%s 회원은 존재하지않습니다.".formatted(username)));
+    public AuthAndMakeTokensResponseBody authAndMakeTokens(@NotBlank String userId, @NotBlank String password) {
+        Member member = memberRepository.findByUserId(userId).orElseThrow(() -> new ResourceNotFoundException(
+                "%s 회원은 존재하지않습니다.".formatted(userId))
+        );
 
+        if(!passwordEncoder.matches(password, member.getUserpassword())) {
+            throw new ResourceNotFoundException("비밀번호가 일치하지않습니다.".formatted(userId));
+        }
         // 시간 설정 및 토큰 생성
         String accessToken = jwtProvider.genToken(member,60 * 60 * 5);
 

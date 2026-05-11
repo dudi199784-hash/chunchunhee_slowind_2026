@@ -14,14 +14,22 @@ export interface UpdateMemberBody {
     userpassword: string;
 }
 
-/** Serialized `Product` entity from API */
+/** `Member` 엔티티 JSON (`MemberResponse.member` 등) — `userpassword`는 `@JsonIgnore` */
 export interface Member {
   id: number;
   username: string;
   userId: string;
-  userpassword: string;
+  userpassword?: string;
   createTime?: string;
   updateTime?: string;
+}
+
+/** 백엔드 `MemberDto` — 로그인 응답 `memberDto` */
+export interface MemberDto {
+  id: number;
+  userId: string;
+  createTime?: string;
+  modifyTime?: string;
 }
 
 /** `GET /api/v1/products` body (`ProductsResponse`) */
@@ -56,5 +64,22 @@ export const updateMember = async (id: number, product: UpdateMemberBody) => {
 
 export const deleteMember = async (id: number) => {
   const response = await http.delete(`${MEMBER_API_BASE_URL}/${id}`);
+  return response.data;
+};
+
+/** `ApiV1MemberController.LoginRequestBody` */
+export interface LoginRequestBody {
+  userId: string;
+  password: string;
+}
+
+/** `ApiV1MemberController.LoginResponseBody` */
+export interface LoginResponseBody {
+  memberDto: MemberDto;
+  accessToken: string;
+}
+
+export const login = async (body: LoginRequestBody): Promise<LoginResponseBody> => {
+  const response = await http.post<LoginResponseBody>(`${MEMBER_API_BASE_URL}/login`, body);
   return response.data;
 };

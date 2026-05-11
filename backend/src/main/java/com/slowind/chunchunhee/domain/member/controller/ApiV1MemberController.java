@@ -135,10 +135,10 @@ public class ApiV1MemberController {
 
     // ==== 로그인 관련
 
-    @Getter
+    @Data
     public static class LoginRequestBody {
         @NotBlank
-        private String username;
+        private String userId;
         @NotBlank
         private String password;
     }
@@ -147,14 +147,15 @@ public class ApiV1MemberController {
     @AllArgsConstructor
     public static class LoginResponseBody {
         private MemberDto memberDto;
+        private String accessToken;
     }
 
     @PostMapping("/login")
     public LoginResponseBody login(@Valid @RequestBody LoginRequestBody loginRequest) {
         // username, password => accessToken
-        MemberService.AuthAndMakeTokensResponseBody authAndMakeTokens = memberService.authAndMakeTokens(loginRequest.getUsername(), loginRequest.getPassword());
+        MemberService.AuthAndMakeTokensResponseBody authAndMakeTokens = memberService.authAndMakeTokens(loginRequest.getUserId(), loginRequest.getPassword());
         return new LoginResponseBody(new MemberDto(
-            authAndMakeTokens.getMember()
-        ));
+            authAndMakeTokens.getMember()),
+                authAndMakeTokens.getAccessToken());
     }
 }
