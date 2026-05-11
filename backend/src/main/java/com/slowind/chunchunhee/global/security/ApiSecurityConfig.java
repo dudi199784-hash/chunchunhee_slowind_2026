@@ -24,7 +24,7 @@ public class ApiSecurityConfig {
         http
                 // (선택) 이 프로젝트가 전부 /api 라면 생략해도 됨. H2만 따로 두고 싶으면 체인을 둘로 쪼개고 @Order 사용.
                 // .securityMatcher("/api/**")
-
+                .securityMatcher("/api/**")
                 .authorizeHttpRequests(auth -> auth
                         // 공개
                         .requestMatchers(HttpMethod.GET, "/api/v1/products", "/api/v1/products/**").permitAll()
@@ -34,7 +34,7 @@ public class ApiSecurityConfig {
                         .requestMatchers("/api/**").authenticated()
 
                         // (정적 리소스·에러 페이지 등이 있으면)
-                        .anyRequest().denyAll()
+                        .anyRequest().authenticated()
                 )
                 .csrf(
                         csrf -> csrf

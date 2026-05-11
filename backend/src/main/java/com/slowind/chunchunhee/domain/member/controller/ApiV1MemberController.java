@@ -131,4 +131,27 @@ public class ApiV1MemberController {
         memberService.deleteMember(id);
         return new RemoveResponse(member);
     }
+
+    // ==== 로그인 관련
+
+    @Getter
+    public static class LoginRequestBody {
+        @NotBlank
+        private String username;
+        @NotBlank
+        private String password;
+    }
+
+    @Getter
+    @AllArgsConstructor
+    public static class LoginResponseBody {
+        private Member member;
+    }
+
+    @PostMapping("/login")
+    public LoginResponseBody login(@Valid @RequestBody LoginRequestBody loginRequest) {
+        // username, password => accessToken
+        Member member = memberService.authAndMakeTokens(loginRequest.getUsername(), loginRequest.getPassword());
+        return new LoginResponseBody(member);
+    }
 }

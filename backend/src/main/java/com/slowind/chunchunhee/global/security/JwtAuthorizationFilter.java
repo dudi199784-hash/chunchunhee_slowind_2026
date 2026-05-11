@@ -29,20 +29,20 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
         String accessToken = rq.getCookie("accessToken");
         // accessToken 검증 or refreshToken 발급
 
-        if ( !accessToken.isBlank() ){
-            if (memberService.validateToken(accessToken)){
-                String refreshToken = rq.getCookie("refreshToken");
-                String rs = memberService.refreshAccessToken(refreshToken);
-                rq.setCrossDomainCookie("accessToken", rs);
-            }
-
-            // SecurityUser 가져오기
-            SecurityUser securityUser = memberService.getUserFromAccessToken(accessToken);
-
-            // 로그인 처리
-            rq.setLogin(securityUser);
-
-        }
+//        if ( !accessToken.isBlank() ){
+//            if (memberService.validateToken(accessToken)){
+//                String refreshToken = rq.getCookie("refreshToken");
+//                String rs = memberService.refreshAccessToken(refreshToken);
+//                rq.setCrossDomainCookie("accessToken", rs);
+//            }
+//
+//            // SecurityUser 가져오기
+//            SecurityUser securityUser = memberService.getUserFromAccessToken(accessToken);
+//
+//            // 로그인 처리
+//            rq.setLogin(securityUser);
+//
+//        }
 
         filterChain.doFilter(request,response);
     }
