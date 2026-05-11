@@ -5,6 +5,8 @@ import com.slowind.chunchunhee.domain.member.repository.MemberRepository;
 import com.slowind.chunchunhee.global.exception.ResourceNotFoundException;
 import com.slowind.chunchunhee.global.jwt.JwtProvider;
 import jakarta.validation.constraints.NotBlank;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -60,7 +62,14 @@ public class MemberService {
         memberRepository.deleteById(id);
     }
 
-    public Member authAndMakeTokens(@NotBlank String username, @NotBlank String password) {
+    @Getter
+    @AllArgsConstructor
+    public static class AuthAndMakeTokensResponseBody {
+        private Member member;
+        private String accessToken;
+    }
+
+    public AuthAndMakeTokensResponseBody authAndMakeTokens(@NotBlank String username, @NotBlank String password) {
         Member member = memberRepository.findByUsername(username).orElseThrow(() -> new ResourceNotFoundException(
                 "%s 회원은 존재하지않습니다.".formatted(username)));
 
@@ -69,6 +78,6 @@ public class MemberService {
 
         System.out.println("accessToken: " + accessToken);
 
-        return member;
+        return new AuthAndMakeTokensResponseBody(member, accessToken);
     }
 }

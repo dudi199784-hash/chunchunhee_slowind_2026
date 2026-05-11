@@ -1,5 +1,6 @@
 package com.slowind.chunchunhee.domain.member.controller;
 
+import com.slowind.chunchunhee.domain.member.dto.MemberDto;
 import com.slowind.chunchunhee.domain.member.entity.Member;
 import com.slowind.chunchunhee.domain.member.repository.MemberRepository;
 import com.slowind.chunchunhee.domain.member.service.MemberService;
@@ -145,13 +146,15 @@ public class ApiV1MemberController {
     @Getter
     @AllArgsConstructor
     public static class LoginResponseBody {
-        private Member member;
+        private MemberDto memberDto;
     }
 
     @PostMapping("/login")
     public LoginResponseBody login(@Valid @RequestBody LoginRequestBody loginRequest) {
         // username, password => accessToken
-        Member member = memberService.authAndMakeTokens(loginRequest.getUsername(), loginRequest.getPassword());
-        return new LoginResponseBody(member);
+        MemberService.AuthAndMakeTokensResponseBody authAndMakeTokens = memberService.authAndMakeTokens(loginRequest.getUsername(), loginRequest.getPassword());
+        return new LoginResponseBody(new MemberDto(
+            authAndMakeTokens.getMember()
+        ));
     }
 }
