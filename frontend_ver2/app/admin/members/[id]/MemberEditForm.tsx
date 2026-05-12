@@ -12,7 +12,7 @@ export default function MemberEditForm({ member }: Props) {
   const router = useRouter();
   const [username, setUsername] = useState(member.username);
   const [userId, setUserId] = useState(member.userId);
-  const [userpassword, setUserpassword] = useState(member.userpassword);
+  const [userpassword, setUserpassword] = useState(member.userpassword ?? "");
   const [pending, setPending] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {

@@ -32,6 +32,7 @@ public class ApiSecurityConfig {
                         // 공개
                         .requestMatchers(HttpMethod.GET, "/api/v1/products", "/api/v1/products/**").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/v1/members/login").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/v1/openai/images/generate").permitAll()
 
                         // 나머지 API는 일단 막거나, 로그인 후만 허용
                         .requestMatchers("/api/**").authenticated()

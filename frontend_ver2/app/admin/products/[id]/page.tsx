@@ -7,6 +7,8 @@ type PageProps = {
   params: Promise<{ id: string }>;
 };
 
+export const dynamic = "force-dynamic";
+
 export default async function AdminProductDetailPage({ params }: PageProps) {
   const { id } = await params;
   const numId = Number(id);

@@ -15,6 +15,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 
+import java.util.Collections;
+
 @Configuration
 @Profile({"dev","test"})
 // --- 배포 제외 / 개발용 데이터
@@ -107,17 +109,17 @@ public class NotProd {
 
             orderService.createOrder(
                     cart1.getMember().getId(),
-                    cart1.getId()
+                    Collections.singletonList(cart1.getId())
             );
 
             orderService.createOrder(
                     cart2.getMember().getId(),
-                    cart2.getId()
+                    Collections.singletonList(cart2.getId())
             );
 
             orderService.createOrder(
                     cart3.getMember().getId(),
-                    cart3.getId()
+                    Collections.singletonList(cart3.getId())
             );
         };
     }

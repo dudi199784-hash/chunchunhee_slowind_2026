@@ -32,6 +32,5 @@ public class OrderItem extends BaseEntity {
     private Design design;
 
     private int quantity;
-
     private int price;
 }

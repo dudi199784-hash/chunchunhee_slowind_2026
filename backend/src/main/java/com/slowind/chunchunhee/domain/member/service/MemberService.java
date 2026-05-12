@@ -4,15 +4,19 @@ import com.slowind.chunchunhee.domain.member.entity.Member;
 import com.slowind.chunchunhee.domain.member.repository.MemberRepository;
 import com.slowind.chunchunhee.global.exception.ResourceNotFoundException;
 import com.slowind.chunchunhee.global.jwt.JwtProvider;
+import com.slowind.chunchunhee.global.security.SecurityUser;
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Service
@@ -64,6 +68,28 @@ public class MemberService {
         memberRepository.deleteById(id);
     }
 
+    public boolean validateToken(String token) {
+        return jwtProvider.verify(token);
+    }
+
+    public String refreshAccessToken(String refreshToken) {
+        System.out.println("쿠키 refreshToken = " + refreshToken);
+        Member member = memberRepository.findByRefreshToken(refreshToken)
+                .orElseThrow(() -> new ResourceNotFoundException("존재하지 않는 리프래시 토큰입니다."));
+        String accesToken = jwtProvider.genAccessToken(member);
+
+        return accesToken;
+    }
+
+    public SecurityUser getUserFromAccessToken(String accessToken) {
+        Map<String, Object> payloadBody = jwtProvider.getClaims(accessToken);
+        long id = (long) payloadBody.get("id");
+        String username = (String) payloadBody.get("username");
+        List<GrantedAuthority> authorities = new ArrayList<>();
+
+        return new SecurityUser(id, username, "", authorities);
+    }
+
     @Getter
     @AllArgsConstructor
     public static class AuthAndMakeTokensResponseBody {
@@ -77,7 +103,7 @@ public class MemberService {
         );
 
         if(!passwordEncoder.matches(password, member.getUserpassword())) {
-            throw new ResourceNotFoundException("비밀번호가 일치하지않습니다.".formatted(userId));
+            throw new ResourceNotFoundException("비밀번호가 일치하지않습니다.");
         }
         // 시간 설정 및 토큰 생성
         String accessToken = jwtProvider.genToken(member,60 * 60 * 5);

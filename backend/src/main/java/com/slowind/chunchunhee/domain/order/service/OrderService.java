@@ -7,11 +7,13 @@ import com.slowind.chunchunhee.domain.member.repository.MemberRepository;
 import com.slowind.chunchunhee.domain.order.entity.Order;
 import com.slowind.chunchunhee.domain.order.entity.OrderItem;
 import com.slowind.chunchunhee.domain.order.repository.OrderRepository;
+import com.slowind.chunchunhee.global.exception.ResourceNotFoundException;
 import jakarta.transaction.Transactional;
 import jakarta.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -38,34 +40,49 @@ public class OrderService {
     }
 
     @Transactional
-    public Order createOrder(Long memberId, Long cartId) {
+    public Order createOrder(Long memberId, List<Long> cartIds) {
 
         Member member = memberRepository.findById(memberId)
                 .orElseThrow();
 
-        List<Cart> carts = cartRepository.findByMemberId(memberId);
+        List<Cart> carts = cartIds.stream()
+                .map(cartRepository::findById)
+                .flatMap(Optional::stream)
+                .filter(c -> c.getMember().getId().equals(memberId))
+                .toList();
+
+        if (carts.size() != cartIds.size()) {
+            throw new ResourceNotFoundException(
+                    "요청한 카트 중 일부를 찾을수 없습니다."
+            );
+        }
+
 
         Order order = new Order();
         order.setMember(member);
 
-        List<OrderItem> items = carts.stream()
-                .map(cart -> {
+        List<OrderItem> orderItems = carts.stream()
+                .map(c -> {
+                    OrderItem orderItem = new OrderItem();
+                    orderItem.setOrder(order);
+                    orderItem.setProduct(c.getProduct());
+                    orderItem.setDesign(c.getDesign());
+                    orderItem.setQuantity(c.getQuantity());
+                    orderItem.setPrice(c.getProduct().getPrice());
 
-                        OrderItem item = new OrderItem();
-
-                    if (cartId.equals(cart.getId())) {
-                        item.setOrder(order);
-                        item.setProduct(cart.getProduct());
-                        item.setDesign(cart.getDesign());
-                        item.setQuantity(cart.getQuantity());
-
-                        item.setPrice(cart.getProduct().getPrice());
-                    }
-                    return item;
+                    return orderItem;
                 })
                 .toList();
 
-        order.setItems(items);
+        int totalQuantity = orderItems.stream().mapToInt(OrderItem::getQuantity).sum();
+        int totalAmount = orderItems.stream()
+                .mapToInt(i -> i.getPrice() * i.getQuantity())
+                .sum();
+
+
+        order.setQuantity(totalQuantity);
+        order.setTotalPrice(totalAmount);
+        order.setItems(orderItems);
 
         orderRepository.save(order);
 

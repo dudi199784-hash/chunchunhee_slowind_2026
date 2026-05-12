@@ -2,6 +2,8 @@ import { getMembers } from "../../lib/api/members";
 import MemberAdminRow from "./MemberAdminRow";
 import Link from "next/link";
 
+export const dynamic = "force-dynamic";
+
 export default async function AdminMembersPage() {
   const { members } = await getMembers();
 

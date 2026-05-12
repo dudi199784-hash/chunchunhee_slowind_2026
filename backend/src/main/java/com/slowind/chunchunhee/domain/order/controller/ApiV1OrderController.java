@@ -7,6 +7,7 @@ import com.slowind.chunchunhee.domain.order.service.OrderService;
 import com.slowind.chunchunhee.global.exception.ResourceNotFoundException;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -51,7 +52,10 @@ public class ApiV1OrderController {
             @Valid @PathVariable("id") Long orderId,
             @RequestParam( value = "user", required = false ) Long userSerial
     ){
-        Order order = orderService.getOrder(orderId).get();
+        Order order = orderService.getOrder(orderId)
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "%d번 주문을 찾지 못 했습니다.".formatted(orderId)
+                ));
 
         return new OrderItemDto(
                 order.getId(),
@@ -66,13 +70,14 @@ public class ApiV1OrderController {
     public static class AddOrderRequest {
         @NotNull
         private Long userId;
-        @NotNull
-        private Long orderId;
+        @NotEmpty
+        private List<Long> cartIds;
     }
 
     @PostMapping("")
     public OrderItemDto addOrder(@Valid @RequestBody AddOrderRequest addOrderRequest) {
-        Order order = orderService.createOrder(addOrderRequest.getUserId(), addOrderRequest.getOrderId());
+        Order order = orderService.createOrder(addOrderRequest.getUserId(), addOrderRequest.getCartIds());
+
         return new OrderItemDto(
                 order.getId(),
                 order.getMember().getUsername(),

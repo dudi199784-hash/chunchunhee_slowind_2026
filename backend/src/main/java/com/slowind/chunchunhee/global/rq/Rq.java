@@ -57,7 +57,6 @@ public class Rq {
                 .findFirst()
                 .map(Cookie::getValue)
                 .orElse("");
-
     }
 
     public Member getMember() {

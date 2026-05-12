@@ -2,6 +2,8 @@ import DesignAdminRow from "./DesignAdminRow";
 import { getDesigns } from "@/app/lib/api/design";
 import Link from "next/link";
 
+export const dynamic = "force-dynamic";
+
 export default async function AdminDesignsPage() {
   const { designs } = await getDesigns();
   return (
