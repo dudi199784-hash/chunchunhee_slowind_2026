@@ -23,12 +23,12 @@ public class OpenaiImageGenerationService {
             .build();
 
     public ApiV1OpenaiImageController.OpenaiImageResponse generate(String prompt) {
-        var body = Map.of(
-                "model", "gpt-image-2",
-                "prompt", prompt,
-                "n", 1,
-                "response_format", "b64_json"
-        );
+        
+        Map<String, Object> body = new java.util.HashMap<>();
+        body.put("model", "gpt-image-2");
+        body.put("prompt", prompt);
+        body.put("n", 1);
+        
         Map<?, ?> res = openaiClient.post()
                 .uri("/images/generations")
                 .header(HttpHeaders.AUTHORIZATION, "Bearer " + openaiApiKey)
@@ -43,11 +43,15 @@ public class OpenaiImageGenerationService {
             throw new IllegalStateException("OpenAI 응답에 data가 없습니다.");
         }
         Map<String, Object> first = dataList.get(0);
-        String b64 = (String) first.get("b64_json");
-        if (b64 == null || b64.isBlank()) {
-            throw new IllegalStateException("OpenAI 응답에 b64_json이 없습니다.");
+        String b64 = first.get("b64_json") != null ? String.valueOf(first.get("b64_json")) : null;
+        String url = first.get("url") != null ? String.valueOf(first.get("url")) : null;
+
+        if (b64 != null && !b64.isBlank()) {
+            return new ApiV1OpenaiImageController.OpenaiImageResponse(b64, null);
         }
-        // res에서 data[0].b64_json 꺼내서 DTO로 감싸 반환
-        return new ApiV1OpenaiImageController.OpenaiImageResponse(b64);
+        if (url != null && !url.isBlank()) {
+            return new ApiV1OpenaiImageController.OpenaiImageResponse(null, url);
+        }
+        throw new IllegalStateException("OpenAI 응답에 b64_json/url이 없습니다.");
     }
 }
