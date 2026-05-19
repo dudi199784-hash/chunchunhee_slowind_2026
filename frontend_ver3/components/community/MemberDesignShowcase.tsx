@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 
+import { formatApiError } from "@/app/lib/api/formatApiError";
 import type { MemberDesignPreview } from "@/config/memberDesignPreview";
 import { fetchShowcaseDesigns } from "@/lib/api/designs";
 import {
@@ -25,6 +26,8 @@ export default function MemberDesignShowcase({
 }: MemberDesignShowcaseProps) {
   const [mode, setMode] = useState<Mode>("views");
   const [isLoading, setIsLoading] = useState(false);
+  const [initialLoading, setInitialLoading] = useState(true);
+  const [loadError, setLoadError] = useState("");
   const [designsByViews, setDesignsByViews] = useState<MemberDesignPreview[]>([]);
   const [designsByLikes, setDesignsByLikes] = useState<MemberDesignPreview[]>([]);
 
@@ -32,12 +35,24 @@ export default function MemberDesignShowcase({
 
   useEffect(() => {
     void (async () => {
-      const [views, likes] = await Promise.all([
-        fetchShowcaseDesigns("views"),
-        fetchShowcaseDesigns("likes"),
-      ]);
-      setDesignsByViews(views);
-      setDesignsByLikes(likes);
+      setInitialLoading(true);
+      setLoadError("");
+      try {
+        const [views, likes] = await Promise.all([
+          fetchShowcaseDesigns("views"),
+          fetchShowcaseDesigns("likes"),
+        ]);
+        setDesignsByViews(views);
+        setDesignsByLikes(likes);
+      } catch (err: unknown) {
+        setLoadError(
+          formatApiError(err, "커뮤니티 디자인을 불러오지 못했습니다."),
+        );
+        setDesignsByViews([]);
+        setDesignsByLikes([]);
+      } finally {
+        setInitialLoading(false);
+      }
     })();
   }, []);
 
@@ -77,10 +92,12 @@ export default function MemberDesignShowcase({
           >
             회원 유니폼 디자인
           </h2>
+          {/* 개발 안내 — 배포 전까지 숨김
           <p className="mt-2 max-w-xl text-sm text-neutral-600">
             회원이 올린 유니폼·로고 디자인을 카테고리별로 모아 보여줍니다. 아래
             목록은 조회수 순위와 좋아요 순위가 번갈아 갱신됩니다.
           </p>
+          */}
         </div>
         <Link
           href="/shop/popular"
@@ -104,9 +121,25 @@ export default function MemberDesignShowcase({
         </p>
       </div>
 
-      {items.length === 0 ? (
-        <p className="mt-6 rounded-md border border-dashed border-neutral-200 bg-white py-10 text-center text-sm text-neutral-500">
+      {initialLoading ? (
+        <p className="mt-6 text-center text-sm text-neutral-500">불러오는 중…</p>
+      ) : loadError ? (
+        <p className="mt-6 rounded-md bg-red-50 px-4 py-3 text-center text-sm text-red-800">
+          {loadError}
+        </p>
+      ) : items.length === 0 ? (
+        <p className="mt-6 rounded-md border border-dashed border-neutral-200 bg-white px-4 py-10 text-center text-sm text-neutral-500">
           아직 표시할 커뮤니티 디자인이 없습니다.
+          <br />
+          <span className="mt-2 block text-xs text-neutral-400">
+            내 디자인에서 「모두 보기」로 공개한 시안만 여기에 표시됩니다.
+          </span>
+          <Link
+            href="/user/designs"
+            className="mt-4 inline-block text-sm font-medium text-neutral-900 underline-offset-4 hover:underline"
+          >
+            내 디자인 관리 →
+          </Link>
         </p>
       ) : (
         <ul
@@ -116,10 +149,20 @@ export default function MemberDesignShowcase({
           role="list"
         >
           {items.map((item) => (
-            <li key={item.id} className={boardCardListItem}>
-              <div className={boardCardHoverShell}>
+            <li key={`${item.assetId}-${item.id}`} className={boardCardListItem}>
+              <Link
+                href={item.browseHref}
+                className={`${boardCardHoverShell} block h-full`}
+              >
                 <article className="flex h-full flex-col overflow-hidden border border-neutral-200 bg-white transition-colors duration-500 ease-in-out hover:border-neutral-300">
-                  <div className="aspect-[4/3] w-full bg-neutral-200/80" aria-hidden />
+                  <div className="aspect-[4/3] w-full bg-neutral-100 p-3">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src={item.imageUrl}
+                      alt={item.title}
+                      className="h-full w-full object-contain"
+                    />
+                  </div>
                   <div className="flex flex-1 flex-col gap-1 p-4">
                     <span className="text-[11px] font-medium uppercase tracking-wide text-neutral-500">
                       {item.category}
@@ -134,7 +177,7 @@ export default function MemberDesignShowcase({
                     />
                   </div>
                 </article>
-              </div>
+              </Link>
             </li>
           ))}
         </ul>

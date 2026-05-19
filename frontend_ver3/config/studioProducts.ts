@@ -1,3 +1,4 @@
+import { uniformProposalTemplateUrl } from "@/config/customMakerStudio";
 import { recommendMedia } from "@/config/media";
 
 /** Recommend 카드 id · URL `?product=` 과 동일 */
@@ -9,7 +10,17 @@ export type StudioProductConfig = {
   /** DB `product.category` · `logo_asset.category` */
   saveCategory: string;
   shortDescription: string;
+  /** 상품 소개 페이지 본문 */
+  introDescription: string;
 };
+
+/** 상품 소개 · 홈 노출 순서 */
+export const productIntroOrder: StudioProductId[] = [
+  "uniform",
+  "cleats",
+  "keeper",
+  "sports",
+];
 
 export const studioProducts: StudioProductConfig[] = [
   {
@@ -17,24 +28,32 @@ export const studioProducts: StudioProductConfig[] = [
     label: "축구화",
     saveCategory: "축구화",
     shortDescription: "팀 컨셉에 맞춘 축구화 시안",
+    introDescription:
+      "맞춤 축구화 제안서 템플릿 위에 팀명·컨셉을 반영한 제품 시안을 만듭니다. 정면·측면이 보이는 스튜디오 제품 사진 형식으로 생성됩니다.",
   },
   {
     id: "uniform",
     label: "유니폼",
     saveCategory: "유니폼",
     shortDescription: "레퍼런스 팀·로고 반영 유니폼 제안서",
+    introDescription:
+      "레퍼런스 팀의 홈·어웨이 스타일과 팀 로고를 반영한 유니폼 제안서 시안입니다. 상의·하의·로고 배치까지 한 장의 제안서 형식으로 확인할 수 있습니다.",
   },
   {
     id: "keeper",
-    label: "키퍼 장갑",
+    label: "키퍼 글러브",
     saveCategory: "키퍼장갑",
     shortDescription: "골키퍼 장갑 디자인 시안",
+    introDescription:
+      "골키퍼 글러브 전용 제안서 템플릿에 팀 색상과 로고를 입힌 시안입니다. 저장한 유니폼 시안을 참조하면 색·로고 스타일을 함께 맞출 수 있습니다.",
   },
   {
     id: "sports",
     label: "스포츠 용품",
     saveCategory: "스포츠용품",
     shortDescription: "팀 컨셉에 맞춘 축구공 시안",
+    introDescription:
+      "축구공 등 스포츠 용품 제안서 템플릿 위에 팀 컨셉을 반영한 시안입니다. 유니폼 시안을 선택하면 팀 색상과 로고를 용품 디자인에 함께 적용합니다.",
   },
 ];
 
@@ -75,6 +94,14 @@ export function productProposalTemplateUrl(
 ): string | null {
   if (productId === "uniform") return null;
   return `/product/${productId}-proposal-template.png`;
+}
+
+/** 디자인 시안 생성에 쓰는 제안서 템플릿 이미지 (상품 소개·미리보기 공용) */
+export function studioProductTemplateUrl(
+  productId: StudioProductId,
+): string {
+  if (productId === "uniform") return uniformProposalTemplateUrl;
+  return productProposalTemplateUrl(productId) ?? "";
 }
 
 export function buildProductDraftPrompt(

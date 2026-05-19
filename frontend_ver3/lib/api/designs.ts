@@ -3,6 +3,7 @@ import type { MemberDesignPreview } from "@/config/memberDesignPreview";
 import {
   fetchBrowseLogoAssets,
   formatMetricCount,
+  logoAssetImageUrl,
   titleFromLogoPrompt,
 } from "@/app/lib/api/logoAssets";
 
@@ -41,13 +42,15 @@ function mapCategory(raw: string | undefined): MemberDesignPreview["category"] {
 function mapDesignsToPreview(list: DesignDto[]): MemberDesignPreview[] {
   return list.map((d) => ({
     id: d.id,
+    assetId: d.id,
     productId: d.productSerial,
     title: d.designTitle || d.title || "제목 없음",
     author: d.username || "—",
     category: mapCategory(d.designCategory),
-    /** 백엔드에 조회수·좋아요 필드가 붙으면 여기서 매핑 */
     viewsDisplay: "—",
     likesDisplay: "—",
+    imageUrl: "",
+    browseHref: `/shop/browse/${d.id}`,
   }));
 }
 
@@ -69,11 +72,10 @@ export async function fetchDesignList(params?: {
   return mapDesignsToPreview(data.designs);
 }
 
-/** 구경하기에 공개된 시안만 (회원 전체 design 테이블 X) */
-export async function fetchPopularDesigns(): Promise<MemberDesignPreview[]> {
-  const items = await fetchBrowseLogoAssets();
-  return items.map((item) => ({
+function mapLogoAssetToPreview(item: Awaited<ReturnType<typeof fetchBrowseLogoAssets>>[number]): MemberDesignPreview {
+  return {
     id: item.designId ?? item.id,
+    assetId: item.id,
     productId: item.productId ?? 0,
     title: titleFromLogoPrompt(item.prompt),
     author: item.authorName,
@@ -82,11 +84,31 @@ export async function fetchPopularDesigns(): Promise<MemberDesignPreview[]> {
     ),
     viewsDisplay: formatMetricCount(item.viewCount),
     likesDisplay: formatMetricCount(item.likeCount),
-  }));
+    imageUrl: logoAssetImageUrl(item.accessPath),
+    browseHref: `/shop/browse/${item.id}`,
+  };
+}
+
+/** 구경하기에 공개(PUBLIC)된 시안만 */
+export async function fetchPopularDesigns(): Promise<MemberDesignPreview[]> {
+  const items = await fetchBrowseLogoAssets();
+  return items.map(mapLogoAssetToPreview);
+}
+
+function parseMetricDisplay(value: string): number {
+  if (value === "—") return 0;
+  return Number(value.replace(/,/g, "")) || 0;
 }
 
 export async function fetchShowcaseDesigns(
-  _mode: ShowcaseMode,
+  mode: ShowcaseMode,
 ): Promise<MemberDesignPreview[]> {
-  return fetchPopularDesigns();
+  const items = await fetchPopularDesigns();
+  const sorted = [...items].sort((a, b) => {
+    if (mode === "views") {
+      return parseMetricDisplay(b.viewsDisplay) - parseMetricDisplay(a.viewsDisplay);
+    }
+    return parseMetricDisplay(b.likesDisplay) - parseMetricDisplay(a.likesDisplay);
+  });
+  return sorted.slice(0, 6);
 }

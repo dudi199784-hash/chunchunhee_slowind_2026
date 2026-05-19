@@ -22,6 +22,9 @@ import {
   titleFromLogoPrompt,
   type MyLogoAssetItem,
 } from "@/app/lib/api/logoAssets";
+import ImageGenerationLoading, {
+  ImageGenerationSpinner,
+} from "@/components/studio/ImageGenerationLoading";
 import ProductDraftHero from "@/components/studio/ProductDraftHero";
 import ProductDraftPicker from "@/components/studio/ProductDraftPicker";
 import {
@@ -686,7 +689,7 @@ export default function CustomMakerInteractive({
             <span
               className={`text-xs font-medium uppercase tracking-[0.2em] ${
                 logoBg
-                  ? "text-white/85 drop-shadow-sm group-hover:text-neutral-500 group-[.is-active]:text-neutral-500"
+                  ? "text-white/85 drop-shadow-sm group-hover:text-white/90 group-[.is-active]:text-white/90"
                   : "text-neutral-500"
               }`}
             >
@@ -695,7 +698,7 @@ export default function CustomMakerInteractive({
             <span
               className={`mt-3 text-lg font-semibold md:text-xl ${
                 logoBg
-                  ? "text-white drop-shadow-[0_2px_14px_rgba(0,0,0,0.55)] group-hover:text-neutral-900 group-hover:drop-shadow-none group-[.is-active]:text-neutral-900 group-[.is-active]:drop-shadow-none"
+                  ? "text-white drop-shadow-[0_2px_14px_rgba(0,0,0,0.55)] group-hover:drop-shadow-[0_2px_16px_rgba(0,0,0,0.5)] group-[.is-active]:drop-shadow-[0_2px_16px_rgba(0,0,0,0.5)]"
                   : "text-neutral-900"
               }`}
             >
@@ -704,7 +707,7 @@ export default function CustomMakerInteractive({
             <span
               className={`mt-2 max-w-xs text-sm ${
                 logoBg
-                  ? "text-white/90 drop-shadow-sm group-hover:text-neutral-700 group-[.is-active]:text-neutral-700"
+                  ? "text-white/90 drop-shadow-sm group-hover:text-white group-[.is-active]:text-white"
                   : "text-neutral-600"
               }`}
             >
@@ -772,9 +775,11 @@ export default function CustomMakerInteractive({
         role="tablist"
         aria-label="생성 모드"
       >
+        {/* 개발 안내 — 배포 전까지 숨김
         <span className="text-center text-xs font-medium tracking-wide text-neutral-500">
           생성 종류 선택
         </span>
+        */}
         <div className="flex rounded-full border border-neutral-200 bg-neutral-100 p-1">
           <button
             type="button"
@@ -810,9 +815,11 @@ export default function CustomMakerInteractive({
       {!authed ? (
         <div className="mx-auto w-full max-w-2xl rounded-md border border-amber-200 bg-amber-50 px-4 py-8 text-center text-sm text-amber-950">
           <p className="font-medium">로그인 후 이용할 수 있습니다.</p>
+          {/* 개발 안내 — 배포 전까지 숨김
           <p className="mt-1 text-xs text-amber-800/90">
             이미지 생성·저장은 회원 인증(JWT)이 필요합니다.
           </p>
+          */}
           <Link
             href="/login"
             className="mt-4 inline-block rounded bg-neutral-900 px-4 py-2 text-xs font-medium text-white"
@@ -826,26 +833,52 @@ export default function CustomMakerInteractive({
             <p className="mb-2 text-sm font-medium text-neutral-700">
               {previewLabel}
             </p>
-            <div className="studio-maker-preview-frame flex w-full items-center justify-center overflow-hidden rounded-md border border-neutral-200 bg-neutral-100 p-4">
-              {loading ? (
-                <span className="text-sm text-neutral-500">생성 중…</span>
-              ) : previewSrc ? (
+            <div
+              className="studio-maker-preview-frame relative flex w-full items-center justify-center overflow-hidden rounded-md border border-neutral-200 bg-neutral-100 p-4"
+              aria-busy={loading}
+            >
+              {!loading && previewSrc ? (
                 // eslint-disable-next-line @next/next/no-img-element
                 <img
                   src={previewSrc}
                   alt={previewAlt}
                   className="max-h-[55vh] w-full object-contain md:max-h-[420px]"
                 />
-              ) : recommendHeroSrc ? (
+              ) : !loading && recommendHeroSrc ? (
                 // eslint-disable-next-line @next/next/no-img-element
                 <img
                   src={recommendHeroSrc}
                   alt={previewAlt}
                   className="max-h-[55vh] w-full object-contain opacity-40 md:max-h-[420px]"
                 />
-              ) : (
+              ) : !loading ? (
                 <span className="text-neutral-500">{previewPlaceholder}</span>
-              )}
+              ) : null}
+              {loading ? (
+                <>
+                  {(previewSrc ?? recommendHeroSrc) ? (
+                    <>
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img
+                        src={previewSrc ?? recommendHeroSrc ?? ""}
+                        alt=""
+                        aria-hidden
+                        className="absolute inset-0 h-full w-full object-contain opacity-25 blur-[2px]"
+                      />
+                      <div className="absolute inset-0 bg-neutral-900/40" aria-hidden />
+                    </>
+                  ) : (
+                    <div
+                      className="absolute inset-0 animate-pulse bg-gradient-to-br from-neutral-200 via-neutral-100 to-neutral-200"
+                      aria-hidden
+                    />
+                  )}
+                  <ImageGenerationLoading
+                    overlay={Boolean(previewSrc ?? recommendHeroSrc)}
+                    className="relative z-10 w-full"
+                  />
+                </>
+              ) : null}
             </div>
             {previewSrc && previewSessionId ? (
               <Link
@@ -1253,24 +1286,36 @@ export default function CustomMakerInteractive({
                 <button
                   type="submit"
                   disabled={loading}
-                  className="flex-1 rounded bg-neutral-900 px-4 py-2.5 text-sm font-medium text-white disabled:opacity-50"
+                  className="flex flex-1 items-center justify-center gap-2 rounded bg-neutral-900 px-4 py-2.5 text-sm font-medium text-white disabled:opacity-50"
                 >
-                  {loading
-                    ? "생성 중…"
-                    : workspace === "uniform"
-                      ? "제안서 시안 생성"
-                      : workspace === "logo"
-                        ? "로고 생성"
-                        : `${activeProductConfig?.label ?? "상품"} 시안 생성`}
+                  {loading ? (
+                    <>
+                      <ImageGenerationSpinner className="h-4 w-4" />
+                      생성 중…
+                    </>
+                  ) : workspace === "uniform" ? (
+                    "제안서 시안 생성"
+                  ) : workspace === "logo" ? (
+                    "로고 생성"
+                  ) : (
+                    `${activeProductConfig?.label ?? "상품"} 시안 생성`
+                  )}
                 </button>
                 {workspace === "uniform" ? (
                   <button
                     type="button"
                     disabled={loading}
                     onClick={() => void runGenerate(true)}
-                    className="flex-1 rounded border border-neutral-400 bg-white px-4 py-2.5 text-sm font-medium text-neutral-900 transition hover:bg-neutral-50 disabled:opacity-50"
+                    className="flex flex-1 items-center justify-center gap-2 rounded border border-neutral-400 bg-white px-4 py-2.5 text-sm font-medium text-neutral-900 transition hover:bg-neutral-50 disabled:opacity-50"
                   >
-                    {loading ? "생성 중…" : "로고 없이 시안보기"}
+                    {loading ? (
+                      <>
+                        <ImageGenerationSpinner className="h-4 w-4" />
+                        생성 중…
+                      </>
+                    ) : (
+                      "로고 없이 시안보기"
+                    )}
                   </button>
                 ) : null}
               </div>

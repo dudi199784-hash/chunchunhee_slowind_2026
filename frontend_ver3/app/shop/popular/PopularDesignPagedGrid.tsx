@@ -33,7 +33,14 @@ function DesignCard({
   return (
     <div className={boardCardHoverShell}>
       <article className="flex h-full flex-col overflow-hidden border border-neutral-200 bg-white transition-colors duration-500 ease-in-out hover:border-neutral-300">
-        <div className="aspect-[4/3] w-full bg-neutral-100" aria-hidden />
+        <div className="aspect-[4/3] w-full bg-neutral-100 p-3">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={item.imageUrl}
+            alt={item.title}
+            className="h-full w-full object-contain"
+          />
+        </div>
         <div className="flex flex-1 flex-col gap-1 p-4">
           <span className="text-[11px] font-medium uppercase tracking-wide text-neutral-500">
             {item.category}

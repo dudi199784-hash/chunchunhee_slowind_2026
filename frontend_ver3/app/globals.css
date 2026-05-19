@@ -64,4 +64,17 @@ body {
       min-height: 360px;
     }
   }
+
+  @keyframes image-gen-progress {
+    0% {
+      transform: translateX(-120%);
+    }
+    100% {
+      transform: translateX(320%);
+    }
+  }
+
+  .image-gen-progress-bar {
+    animation: image-gen-progress 1.85s ease-in-out infinite;
+  }
 }

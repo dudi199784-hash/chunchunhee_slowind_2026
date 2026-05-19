@@ -9,6 +9,9 @@ import {
 } from "@/app/lib/api/openai";
 import { http } from "@/app/lib/api/http";
 import { saveLogoAsset } from "@/app/lib/api/logoAssets";
+import ImageGenerationLoading, {
+  ImageGenerationSpinner,
+} from "@/components/studio/ImageGenerationLoading";
 import { uniformInpaintAssetUrls } from "@/config/customMakerStudio";
 import { AUTH_CHANGED_EVENT } from "@/lib/auth/constants";
 import { getAccessToken } from "@/lib/auth/session";
@@ -193,19 +196,47 @@ export default function AiImagePlayground({
             <p className="mb-2 text-sm text-neutral-600 dark:text-neutral-400">
               {previewAreaLabel}
             </p>
-            <div className="flex min-h-[min(280px,42vh)] w-full items-center justify-center overflow-hidden rounded-md border border-neutral-200 bg-neutral-100 p-3 dark:border-neutral-700 dark:bg-neutral-800 md:min-h-[320px]">
-              {loading ? (
-                <span className="text-sm text-neutral-500 dark:text-neutral-400">생성 중…</span>
-              ) : previewSrc ? (
+            <div
+              className="relative flex min-h-[min(280px,42vh)] w-full items-center justify-center overflow-hidden rounded-md border border-neutral-200 bg-neutral-100 p-3 dark:border-neutral-700 dark:bg-neutral-800 md:min-h-[320px]"
+              aria-busy={loading}
+            >
+              {!loading && previewSrc ? (
                 // eslint-disable-next-line @next/next/no-img-element -- 동적 data URL / 외부 URL
                 <img
                   src={previewSrc}
                   alt={previewAlt}
                   className="max-h-[min(360px,50vh)] w-full object-contain"
                 />
-              ) : (
-                <span className="text-neutral-500 dark:text-neutral-400">{placeholder}</span>
-              )}
+              ) : !loading ? (
+                <span className="text-neutral-500 dark:text-neutral-400">
+                  {placeholder}
+                </span>
+              ) : null}
+              {loading ? (
+                <>
+                  {previewSrc ? (
+                    <>
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img
+                        src={previewSrc}
+                        alt=""
+                        aria-hidden
+                        className="absolute inset-0 h-full w-full object-contain opacity-25 blur-[2px]"
+                      />
+                      <div className="absolute inset-0 bg-neutral-900/40" aria-hidden />
+                    </>
+                  ) : (
+                    <div
+                      className="absolute inset-0 animate-pulse bg-gradient-to-br from-neutral-200 via-neutral-100 to-neutral-200 dark:from-neutral-800 dark:via-neutral-700 dark:to-neutral-800"
+                      aria-hidden
+                    />
+                  )}
+                  <ImageGenerationLoading
+                    overlay={Boolean(previewSrc)}
+                    className="relative z-10 w-full"
+                  />
+                </>
+              ) : null}
             </div>
             <button
               type="button"
@@ -243,13 +274,18 @@ export default function AiImagePlayground({
               <button
                 type="submit"
                 disabled={loading}
-                className="rounded bg-neutral-900 px-4 py-2 text-sm text-white disabled:opacity-50 dark:bg-neutral-100 dark:text-neutral-900"
+                className="inline-flex items-center justify-center gap-2 rounded bg-neutral-900 px-4 py-2 text-sm text-white disabled:opacity-50 dark:bg-neutral-100 dark:text-neutral-900"
               >
-                {loading
-                  ? "생성 중…"
-                  : imageMode === "uniform-inpaint"
-                    ? "틀 유지 · 마스크 영역만 인페인트"
-                    : "백엔드로 이미지 생성 요청"}
+                {loading ? (
+                  <>
+                    <ImageGenerationSpinner className="h-4 w-4" />
+                    생성 중…
+                  </>
+                ) : imageMode === "uniform-inpaint" ? (
+                  "틀 유지 · 마스크 영역만 인페인트"
+                ) : (
+                  "백엔드로 이미지 생성 요청"
+                )}
               </button>
             </form>
             {imageMode === "uniform-inpaint" ? (
