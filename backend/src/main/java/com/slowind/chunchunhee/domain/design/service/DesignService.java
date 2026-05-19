@@ -39,17 +39,18 @@ public class DesignService {
 
     //
     public List<Design> getList(Long userSerial, String category) {
+        String cat = (category != null && !category.isBlank()) ? category : null;
 
-        if ( userSerial != null && category != null ) {
-            return designRepository.findByMemberIdAndProductCategory(userSerial, category);
+        if (userSerial != null && cat != null) {
+            return designRepository.findByMemberIdAndProductCategory(userSerial, cat);
         }
 
-        if ( userSerial != null ) {
+        if (userSerial != null) {
             return designRepository.findByMemberId(userSerial);
         }
 
-        if ( category != null ) {
-            return designRepository.findByProductCategory(category);
+        if (cat != null) {
+            return designRepository.findByProductCategory(cat);
         }
 
         return designRepository.findAll();

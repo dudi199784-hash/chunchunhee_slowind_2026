@@ -1,5 +1,6 @@
 package com.slowind.chunchunhee.domain.order.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.slowind.chunchunhee.domain.design.entity.Design;
 import com.slowind.chunchunhee.domain.product.entity.Product;
 import com.slowind.chunchunhee.global.jpa.BaseEntity;
@@ -19,6 +20,7 @@ import lombok.experimental.SuperBuilder;
 @ToString(callSuper = true)
 public class OrderItem extends BaseEntity {
 
+    @JsonBackReference
     @ManyToOne
     @JoinColumn(name = "order_id")
     private Order order;

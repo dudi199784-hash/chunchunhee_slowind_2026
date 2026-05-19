@@ -11,7 +11,7 @@ export default function ProductAdminRow({ product }: Props) {
   const router = useRouter();
 
   const handleDelete = async () => {
-    if (!globalThis.confirm("이 상품을 삭제할까요?")) return;
+    if (!globalThis.confirm("해당 상품을 삭제할까요?")) return;
     await deleteProduct(product.id);
     router.refresh();
   };

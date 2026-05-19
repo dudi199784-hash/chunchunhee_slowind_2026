@@ -11,10 +11,15 @@ spring:
     username: doen
     password:
     driver-class-name: org.h2.Driver
-#    datasource:
-#      driver-class-name: org.mariadb.jdbc.Driver
-#      url: jdbc:mariadb://127.0.0.1:3306/db_dev
-#      username: root
-#      password:
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+  jpa:
+    hibernate:
+      ddl-auto: update
 custom:
   fileDirPath: /usr/file
+app:
+  upload:
+    root: ${user.dir}/uploads

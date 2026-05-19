@@ -60,14 +60,19 @@ public class Rq {
     }
 
     public Member getMember() {
-        if (isLogout()) return null;
-        if (member == null) {
-            member = entityManager.getReference(Member.class, getUser().getId());
+        SecurityUser user = getUser();
+        if (user == null) {
+            member = null;
+            return null;
+        }
+        if (member == null || user.getId() != member.getId()) {
+            member = entityManager.getReference(Member.class, user.getId());
         }
         return member;
     }
 
     public void setLogin(SecurityUser securityUser) {
+        member = null;
         SecurityContextHolder.getContext().setAuthentication(securityUser.getAuthentication());
     }
 

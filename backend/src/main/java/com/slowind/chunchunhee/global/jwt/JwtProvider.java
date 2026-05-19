@@ -1,6 +1,7 @@
 package com.slowind.chunchunhee.global.jwt;
 
 import com.slowind.chunchunhee.domain.member.entity.Member;
+import com.slowind.chunchunhee.domain.member.entity.MemberRole;
 import com.slowind.chunchunhee.global.util.Util;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -39,10 +40,20 @@ public class JwtProvider {
         return genToken(member, 60 * 10);
     }
     public String genToken(Member member, int seconds) {
+        return genToken(member, null, seconds);
+    }
+
+    public String genToken(Member member, String sessionId, int seconds) {
 
         Map<String, Object> claims = new HashMap<>();
         claims.put("id", member.getId());
         claims.put("username", member.getUsername());
+        claims.put("userId", member.getUserId());
+        if (sessionId != null && !sessionId.isBlank()) {
+            claims.put("sessionId", sessionId);
+        }
+        MemberRole role = member.getRole() != null ? member.getRole() : MemberRole.USER;
+        claims.put("role", role.name());
 
         long now = new Date().getTime();
         Date accessTokenExpiresIn = new Date(now + 1000L * seconds);

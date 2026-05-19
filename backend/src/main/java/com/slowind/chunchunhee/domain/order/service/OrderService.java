@@ -8,6 +8,7 @@ import com.slowind.chunchunhee.domain.order.entity.Order;
 import com.slowind.chunchunhee.domain.order.entity.OrderItem;
 import com.slowind.chunchunhee.domain.order.repository.OrderRepository;
 import com.slowind.chunchunhee.global.exception.ResourceNotFoundException;
+import com.slowind.chunchunhee.global.util.ShippingAddressFormatter;
 import jakarta.transaction.Transactional;
 import jakarta.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
@@ -40,7 +41,18 @@ public class OrderService {
     }
 
     @Transactional
-    public Order createOrder(Long memberId, List<Long> cartIds) {
+    public Order createOrder(
+            Long memberId,
+            List<Long> cartIds,
+            Integer quantityOverride,
+            String shippingReceiver,
+            String shippingPhone,
+            String shippingZipCode,
+            String shippingAddressLine1,
+            String shippingAddressLine2,
+            String shippingAddress,
+            String personalizationNote
+    ) {
 
         Member member = memberRepository.findById(memberId)
                 .orElseThrow();
@@ -57,9 +69,25 @@ public class OrderService {
             );
         }
 
+        if (quantityOverride != null && quantityOverride > 0) {
+            for (Cart cart : carts) {
+                cart.setQuantity(quantityOverride);
+            }
+        }
 
         Order order = new Order();
         order.setMember(member);
+        order.setShippingReceiver(shippingReceiver);
+        order.setShippingPhone(shippingPhone);
+        order.setShippingZipCode(shippingZipCode);
+        order.setShippingAddressLine1(shippingAddressLine1);
+        order.setShippingAddressLine2(shippingAddressLine2);
+        String fullAddress = shippingAddress != null && !shippingAddress.isBlank()
+                ? shippingAddress.trim()
+                : ShippingAddressFormatter.formatFull(shippingZipCode, shippingAddressLine1, shippingAddressLine2);
+        order.setShippingAddress(fullAddress);
+        order.setPersonalizationNote(personalizationNote);
+        order.setStatus("주문완료");
 
         List<OrderItem> orderItems = carts.stream()
                 .map(c -> {

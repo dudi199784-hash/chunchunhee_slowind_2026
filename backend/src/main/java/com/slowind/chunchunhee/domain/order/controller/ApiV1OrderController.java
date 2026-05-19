@@ -65,18 +65,41 @@ public class ApiV1OrderController {
         );
     }
 
-    @Getter
-    @AllArgsConstructor
+    @Data
     public static class AddOrderRequest {
         @NotNull
         private Long userId;
         @NotEmpty
         private List<Long> cartIds;
+        private Integer quantity;
+        @NotBlank
+        private String shippingReceiver;
+        @NotBlank
+        private String shippingPhone;
+        @NotBlank
+        private String shippingZipCode;
+        @NotBlank
+        private String shippingAddressLine1;
+        @NotBlank
+        private String shippingAddressLine2;
+        private String shippingAddress;
+        private String personalizationNote;
     }
 
     @PostMapping("")
     public OrderItemDto addOrder(@Valid @RequestBody AddOrderRequest addOrderRequest) {
-        Order order = orderService.createOrder(addOrderRequest.getUserId(), addOrderRequest.getCartIds());
+        Order order = orderService.createOrder(
+                addOrderRequest.getUserId(),
+                addOrderRequest.getCartIds(),
+                addOrderRequest.getQuantity(),
+                addOrderRequest.getShippingReceiver().trim(),
+                addOrderRequest.getShippingPhone().trim(),
+                addOrderRequest.getShippingZipCode().trim(),
+                addOrderRequest.getShippingAddressLine1().trim(),
+                addOrderRequest.getShippingAddressLine2().trim(),
+                addOrderRequest.getShippingAddress(),
+                addOrderRequest.getPersonalizationNote()
+        );
 
         return new OrderItemDto(
                 order.getId(),

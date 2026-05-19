@@ -4,7 +4,12 @@ import com.slowind.chunchunhee.domain.cart.dto.CartDto;
 import com.slowind.chunchunhee.domain.cart.entity.Cart;
 import com.slowind.chunchunhee.domain.cart.service.CartService;
 import com.slowind.chunchunhee.global.exception.ResourceNotFoundException;
+import com.slowind.chunchunhee.global.security.SecurityUser;
 import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.server.ResponseStatusException;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -29,21 +34,19 @@ public class ApiV1CartController {
             @RequestParam( value = "design", required = false ) Long designSerial,
             @RequestParam( value = "category", required = false ) String category
     ) {
+        long loginMemberId = requireLoginMemberId();
+        if (userSerial != null && !userSerial.equals(loginMemberId)) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "본인 장바구니만 조회할 수 있습니다.");
+        }
         List<Cart> carts = cartService.getList(
-                userSerial,
+                loginMemberId,
                 productSerial,
                 designSerial,
                 category
         );
 
         return carts.stream()
-                .map( c -> new CartDto(
-                                c.getId(),
-                                c.getDesign().getId(),
-                                c.getMember().getId(),
-                                c.getProduct().getId(),
-                                c.getMember().getUsername()
-                        ))
+                .map(cartService::toDto)
                 .toList();
     }
 
@@ -54,13 +57,7 @@ public class ApiV1CartController {
                 .orElseThrow(() -> new ResourceNotFoundException(
                         "%d번 카트상품은 존재하지않습니다.".formatted(id)
                 ));
-        return new CartDto(
-                c.getId(),
-                c.getDesign().getId(),
-                c.getMember().getId(),
-                c.getProduct().getId(),
-                c.getMember().getUsername()
-        );
+        return cartService.toDto(c);
     }
 
     // --- inner 클래스 카트 추가 요청
@@ -88,6 +85,10 @@ public class ApiV1CartController {
     // --- 카트에 상품 추가
     @PostMapping("")
     public AddCartResponse addCart(@Valid @RequestBody AddCartRequest addCartRequest) {
+        long loginMemberId = requireLoginMemberId();
+        if (!addCartRequest.getCustomerId().equals(loginMemberId)) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "본인 장바구니에만 담을 수 있습니다.");
+        }
 
         Cart c = cartService.create(
                 addCartRequest.getCartId(),
@@ -165,6 +166,14 @@ public class ApiV1CartController {
 
         cartService.delete(id);
         return new RemoveCartResponse(cart);
+    }
+
+    private long requireLoginMemberId() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth == null || !(auth.getPrincipal() instanceof SecurityUser su)) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "로그인이 필요합니다.");
+        }
+        return su.getId();
     }
 
 }
